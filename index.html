@@ -1,202 +1,229 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Math Trainer</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #ffffff;
-      color: #000000;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-    }
-    .app {
-      width: 100%;
-      max-width: 420px;
-      padding: 20px;
-      box-sizing: border-box;
-    }
-    h1 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    .card {
-      border: 2px solid #000;
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 16px;
-    }
-    label {
-      display: block;
-      margin-bottom: 6px;
-      font-weight: bold;
-    }
-    select, button {
-      width: 100%;
-      padding: 12px;
-      font-size: 16px;
-      margin-bottom: 12px;
-    }
-    button {
-      background: #000;
-      color: #fff;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-    }
-    button:disabled {
-      background: #555;
-    }
-    .question {
-      font-size: 28px;
-      text-align: center;
-      margin: 20px 0;
-    }
-    .options button {
-      background: #fff;
-      color: #000;
-      border: 2px solid #000;
-      margin-bottom: 10px;
-    }
-    .timer, .score {
-      text-align: center;
-      font-size: 18px;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Math Trainer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body{
+  margin:0;
+  font-family: system-ui, Arial;
+  background:#ffffff;
+  color:#000;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:100vh;
+}
+.app{
+  width:100%;
+  max-width:380px;
+  background:#fff;
+  border-radius:18px;
+  padding:20px;
+  box-shadow:0 12px 30px rgba(0,0,0,.15);
+  text-align:center;
+}
+h2,h3{margin:10px 0}
+button,select,input{
+  width:100%;
+  padding:14px;
+  margin:8px 0;
+  font-size:16px;
+  border-radius:10px;
+}
+button{
+  background:#000;
+  color:#fff;
+  border:none;
+  font-weight:600;
+}
+.secondary{background:#eee;color:#000}
+.options button{
+  background:#f5f5f5;
+  color:#000;
+}
+.options button.correct{background:#4caf50;color:#fff}
+.options button.wrong{background:#e53935;color:#fff}
+.timer-bar{
+  height:8px;
+  background:#ddd;
+  border-radius:5px;
+  overflow:hidden;
+}
+.timer-fill{
+  height:100%;
+  background:#000;
+  width:100%;
+}
+.stat{
+  display:flex;
+  justify-content:space-between;
+  margin:6px 0;
+}
+</style>
 </head>
 <body>
-  <div class="app">
-    <h1>Math Trainer</h1><div id="setup" class="card">
-  <label>Difficulty</label>
+
+<div class="app">
+
+<!-- HOME -->
+<div id="home">
+  <h2>🧮 Math Trainer</h2>
+  <p>Train your speed. From kids to pros.</p>
+  <button onclick="showSetup()">▶ Start Training</button>
+  <button class="secondary" onclick="showStats()">📊 Stats</button>
+</div>
+
+<!-- SETUP -->
+<div id="setup" style="display:none">
+  <h3>Game Setup</h3>
+
   <select id="difficulty">
-    <option value="tiny">Tiny Kids</option>
-    <option value="kids">Kids</option>
-    <option value="beginner">Beginner</option>
-    <option value="intermediate">Intermediate</option>
-    <option value="advanced">Advanced</option>
-    <option value="super">Super Advanced</option>
+    <option value="1">Tiny Kids</option>
+    <option value="2">Kids</option>
+    <option value="3">Beginner</option>
+    <option value="4">Intermediate</option>
+    <option value="5">Advanced</option>
+    <option value="6">Super Advanced</option>
   </select>
 
-  <label>Time per question (seconds)</label>
-  <select id="time">
-    <option value="3">3</option>
-    <option value="5">5</option>
-    <option value="10">10</option>
-    <option value="20">20</option>
-  </select>
-
-  <label>Questions per round</label>
-  <select id="count">
-    <option value="5">5</option>
-    <option value="10" selected>10</option>
-    <option value="15">15</option>
-    <option value="20">20</option>
+  <input type="number" id="time" min="3" value="5">
+  <select id="questions">
+    <option>5</option><option selected>10</option><option>15</option><option>20</option>
   </select>
 
   <button onclick="startGame()">Start</button>
+  <button class="secondary" onclick="goHome()">Back</button>
 </div>
 
-<div id="game" class="card" style="display:none">
-  <div class="timer" id="timer"></div>
-  <div class="question" id="question"></div>
+<!-- GAME -->
+<div id="game" style="display:none">
+  <h3 id="question"></h3>
+  <div class="timer-bar"><div id="fill" class="timer-fill"></div></div>
+  <p>⏱ <span id="t"></span>s</p>
   <div class="options" id="options"></div>
-  <div class="score" id="progress"></div>
 </div>
 
-<div id="end" class="card" style="display:none">
-  <h2>Round Complete</h2>
-  <p id="finalScore"></p>
-  <button onclick="location.reload()">Play Again</button>
+<!-- END -->
+<div id="end" style="display:none"></div>
+
+<!-- STATS -->
+<div id="stats" style="display:none">
+  <h3>Your Stats</h3>
+  <div class="stat"><span>Games Played</span><span id="sGames"></span></div>
+  <div class="stat"><span>Total Questions</span><span id="sTotal"></span></div>
+  <div class="stat"><span>Correct</span><span id="sCorrect"></span></div>
+  <div class="stat"><span>Accuracy</span><span id="sAcc"></span>%</div>
+  <button onclick="goHome()">Back</button>
 </div>
 
-  </div>  <script>
-    let settings, current = 0, score = 0, timerInt, timeLeft;
+</div>
 
-    function startGame() {
-      settings = {
-        difficulty: difficulty.value,
-        time: Math.max(3, parseInt(time.value)),
-        total: parseInt(count.value)
-      };
-      setup.style.display = 'none';
-      game.style.display = 'block';
-      nextQuestion();
-    }
+<!-- SOUNDS -->
+<audio id="sndCorrect" src="https://actions.google.com/sounds/v1/cartoon/pop.ogg"></audio>
+<audio id="sndWrong" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg"></audio>
+<audio id="sndEnd" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
 
-    function getConfig(diff) {
-      switch (diff) {
-        case 'tiny': return { max: 5, ops: ['+'] };
-        case 'kids': return { max: 10, ops: ['+', '-'] };
-        case 'beginner': return { max: 20, ops: ['+', '-', '*'] };
-        case 'intermediate': return { max: 100, ops: ['+', '-', '*', '/'] };
-        case 'advanced': return { max: 999, ops: ['+', '-', '*', '/'] };
-        case 'super': return { max: 9999, ops: ['+', '-', '*', '/'] };
-      }
-    }
+<script>
+let cur=0,correct=0,answer,timer,timeLeft;
+let stats=JSON.parse(localStorage.getItem("mathStats"))||{games:0,total:0,correct:0};
 
-    function nextQuestion() {
-      if (current >= settings.total) return endGame();
-      current++;
-      progress.textContent = `Question ${current} / ${settings.total}`;
-      timeLeft = settings.time;
-      timer.textContent = `Time: ${timeLeft}s`;
+function showSetup(){home.style.display="none";setup.style.display="block";}
+function showStats(){
+  home.style.display="none";statsDiv.style.display="block";
+  sGames.textContent=stats.games;
+  sTotal.textContent=stats.total;
+  sCorrect.textContent=stats.correct;
+  sAcc.textContent=stats.total?Math.round(stats.correct/stats.total*100):0;
+}
+function goHome(){
+  home.style.display="block";
+  setup.style.display=game.style.display=end.style.display=statsDiv.style.display="none";
+}
 
-      clearInterval(timerInt);
-      timerInt = setInterval(() => {
-        timeLeft--;
-        timer.textContent = `Time: ${timeLeft}s`;
-        if (timeLeft <= 0) {
-          clearInterval(timerInt);
-          nextQuestion();
-        }
-      }, 1000);
+function startGame(){
+  cur=0;correct=0;
+  setup.style.display="none";
+  game.style.display="block";
+  next();
+}
 
-      generateQuestion();
-    }
+function next(){
+  if(cur>=+questions.value) return finish();
+  cur++; generate(); startTimer();
+}
 
-    function generateQuestion() {
-      const cfg = getConfig(settings.difficulty);
-      const a = Math.floor(Math.random() * cfg.max) + 1;
-      const b = Math.floor(Math.random() * cfg.max) + 1;
-      const op = cfg.ops[Math.floor(Math.random() * cfg.ops.length)];
+function generate(){
+  const d=+difficulty.value;
+  let max=[5,10,20,100,999,9999][d-1];
+  let ops=[['+'],['+','-'],['+','-','*'],['+','-','*','/'],['+','-','*','/'],['+','-','*','/']][d-1];
+  let a=Math.floor(Math.random()*max)+1;
+  let b=Math.floor(Math.random()*max)+1;
+  let op=ops[Math.floor(Math.random()*ops.length)];
+  if(op==='/') a=a*b;
+  answer=eval(a+op+b);
+  question.textContent=`${a} ${op} ${b}`;
 
-      let correct;
-      switch (op) {
-        case '+': correct = a + b; break;
-        case '-': correct = a - b; break;
-        case '*': correct = a * b; break;
-        case '/': correct = parseFloat((a / b).toFixed(2)); break;
-      }
+  let arr=[answer];
+  while(arr.length<4){
+    let f=answer+Math.floor(Math.random()*20-10);
+    if(!arr.includes(f)) arr.push(f);
+  }
+  arr.sort(()=>Math.random()-0.5);
+  options.innerHTML="";
+  arr.forEach(v=>{
+    let btn=document.createElement("button");
+    btn.textContent=v;
+    btn.onclick=()=>check(v,btn);
+    options.appendChild(btn);
+  });
+}
 
-      question.textContent = `${a} ${op} ${b}`;
-      options.innerHTML = '';
+function check(v,btn){
+  clearInterval(timer);
+  if(v===answer){
+    correct++; btn.classList.add("correct"); sndCorrect.play();
+  }else{
+    btn.classList.add("wrong"); sndWrong.play();
+  }
+  setTimeout(next,500);
+}
 
-      const answers = new Set([correct]);
-      while (answers.size < 4) {
-        answers.add(correct + Math.floor(Math.random() * 10 - 5));
-      }
+function startTimer(){
+  clearInterval(timer);
+  timeLeft=Math.max(3,+time.value);
+  t.textContent=timeLeft;
+  fill.style.width="100%";
+  timer=setInterval(()=>{
+    timeLeft--;
+    t.textContent=timeLeft;
+    fill.style.width=(timeLeft/Math.max(3,time.value)*100)+"%";
+    if(timeLeft<=0){clearInterval(timer);next();}
+  },1000);
+}
 
-      [...answers].sort(() => Math.random() - 0.5).forEach(ans => {
-        const btn = document.createElement('button');
-        btn.textContent = ans;
-        btn.onclick = () => {
-          if (ans === correct) score++;
-          clearInterval(timerInt);
-          nextQuestion();
-        };
-        options.appendChild(btn);
-      });
-    }
+function finish(){
+  game.style.display="none";
+  end.style.display="block";
+  sndEnd.play();
+  stats.games++;
+  stats.total+=+questions.value;
+  stats.correct+=correct;
+  localStorage.setItem("mathStats",JSON.stringify(stats));
+  end.innerHTML=`
+    <h3>Session Complete</h3>
+    <p>Correct: ${correct}/${questions.value}</p>
+    <button onclick="goHome()">Home</button>
+  `;
+}
 
-    function endGame() {
-      clearInterval(timerInt);
-      game.style.display = 'none';
-      end.style.display = 'block';
-      finalScore.textContent = `Score: ${score} / ${settings.total}`;
-    }
-  </script></body>
+const home=document.getElementById("home");
+const setup=document.getElementById("setup");
+const game=document.getElementById("game");
+const end=document.getElementById("end");
+const statsDiv=document.getElementById("stats");
+</script>
+
+</body>
 </html>
