@@ -7,60 +7,59 @@
 <style>
 body{
   margin:0;
-  font-family: system-ui, Arial;
-  background:#ffffff;
-  color:#000;
+  font-family: system-ui, -apple-system, Arial;
+  background:#fff;
   display:flex;
   justify-content:center;
   align-items:center;
   min-height:100vh;
 }
-.app{
-  width:100%;
-  max-width:380px;
+.app{width:100%;max-width:390px;padding:20px}
+.card{
   background:#fff;
-  border-radius:18px;
+  border-radius:20px;
   padding:20px;
   box-shadow:0 12px 30px rgba(0,0,0,.15);
-  text-align:center;
 }
 h2,h3{margin:10px 0}
 button,select,input{
   width:100%;
   padding:14px;
-  margin:8px 0;
   font-size:16px;
-  border-radius:10px;
+  margin-top:10px;
+  border-radius:12px;
+  border:1px solid #ccc;
 }
 button{
   background:#000;
   color:#fff;
   border:none;
-  font-weight:600;
+  font-weight:700;
 }
-.secondary{background:#eee;color:#000}
-.options button{
-  background:#f5f5f5;
-  color:#000;
+.secondary{background:#f2f2f2;color:#000}
+.center{text-align:center}
+.fade{opacity:.7}
+.big{font-size:22px;font-weight:800}
+.avatar{
+  font-size:48px;
+  cursor:pointer;
+  margin:8px;
+  display:inline-block;
 }
-.options button.correct{background:#4caf50;color:#fff}
-.options button.wrong{background:#e53935;color:#fff}
-.timer-bar{
-  height:8px;
-  background:#ddd;
-  border-radius:5px;
-  overflow:hidden;
+.avatar.selected{outline:3px solid #000;border-radius:12px}
+.progress{
+  height:8px;background:#e0e0e0;border-radius:5px;overflow:hidden
 }
-.timer-fill{
-  height:100%;
-  background:#000;
-  width:100%;
-}
-.stat{
+.progress-fill{height:100%;background:#000;width:0%}
+.stats{
   display:flex;
   justify-content:space-between;
-  margin:6px 0;
+  font-size:14px;
+  font-weight:600;
 }
+.options button{background:#f6f6f6;color:#000}
+.correct{background:#4caf50!important;color:#fff}
+.wrong{background:#e53935!important;color:#fff}
 </style>
 </head>
 <body>
@@ -68,17 +67,34 @@ button{
 <div class="app">
 
 <!-- HOME -->
-<div id="home">
-  <h2>🧮 Math Trainer</h2>
-  <p>Train your speed. From kids to pros.</p>
-  <button onclick="showSetup()">▶ Start Training</button>
-  <button class="secondary" onclick="showStats()">📊 Stats</button>
+<div id="home" class="card center">
+  <div id="homeAvatar" class="big">🙂</div>
+  <h2>Math Trainer</h2>
+  <p class="fade">Train your brain daily</p>
+  <p>🔥 Best Streak: <span id="bestStreakHome">0</span></p>
+  <button onclick="openAvatar()">Choose Avatar</button>
+  <button onclick="openSetup()">Start Lesson</button>
+</div>
+
+<!-- AVATAR -->
+<div id="avatarPage" class="card center" style="display:none">
+  <h3>Choose your avatar</h3>
+  <div id="avatars">
+    <span class="avatar">🙂</span>
+    <span class="avatar">😎</span>
+    <span class="avatar">🧠</span>
+    <span class="avatar">👩‍🚀</span>
+    <span class="avatar">👨‍💻</span>
+    <span class="avatar">🦉</span>
+  </div>
+  <button onclick="saveAvatar()">Save</button>
+  <button class="secondary" onclick="goHome()">Back</button>
 </div>
 
 <!-- SETUP -->
-<div id="setup" style="display:none">
+<div id="setup" class="card" style="display:none">
   <h3>Game Setup</h3>
-
+  <label>Difficulty</label>
   <select id="difficulty">
     <option value="1">Tiny Kids</option>
     <option value="2">Kids</option>
@@ -88,9 +104,13 @@ button{
     <option value="6">Super Advanced</option>
   </select>
 
+  <label>Time per question (sec)</label>
   <input type="number" id="time" min="3" value="5">
+
+  <label>Questions</label>
   <select id="questions">
-    <option>5</option><option selected>10</option><option>15</option><option>20</option>
+    <option>5</option><option selected>10</option>
+    <option>15</option><option>20</option>
   </select>
 
   <button onclick="startGame()">Start</button>
@@ -98,63 +118,90 @@ button{
 </div>
 
 <!-- GAME -->
-<div id="game" style="display:none">
-  <h3 id="question"></h3>
-  <div class="timer-bar"><div id="fill" class="timer-fill"></div></div>
-  <p>⏱ <span id="t"></span>s</p>
-  <div class="options" id="options"></div>
+<div id="game" class="card" style="display:none">
+  <div class="center big" id="gameAvatar">🙂</div>
+  <div class="progress"><div id="progressFill" class="progress-fill"></div></div>
+
+  <div class="stats">
+    <div>🔥 <span id="streak">0</span></div>
+    <div>🏆 <span id="bestStreak">0</span></div>
+  </div>
+
+  <p class="fade">Question <span id="qIndex"></span>/<span id="qTotal"></span></p>
+  <h3 id="question" class="big"></h3>
+  <p>⏱ <span id="timeLeft"></span>s</p>
+  <div id="options" class="options"></div>
 </div>
 
-<!-- END -->
-<div id="end" style="display:none"></div>
-
-<!-- STATS -->
-<div id="stats" style="display:none">
-  <h3>Your Stats</h3>
-  <div class="stat"><span>Games Played</span><span id="sGames"></span></div>
-  <div class="stat"><span>Total Questions</span><span id="sTotal"></span></div>
-  <div class="stat"><span>Correct</span><span id="sCorrect"></span></div>
-  <div class="stat"><span>Accuracy</span><span id="sAcc"></span>%</div>
-  <button onclick="goHome()">Back</button>
+<!-- RESULT -->
+<div id="result" class="card center" style="display:none">
+  <div class="big" id="resultAvatar">🙂</div>
+  <h3>Lesson Complete</h3>
+  <p id="scoreText" class="big"></p>
+  <p>🔥 Streak: <span id="finalStreak"></span></p>
+  <p>🏆 Best: <span id="finalBest"></span></p>
+  <button onclick="openSetup()">Next Lesson</button>
+  <button class="secondary" onclick="goHome()">Home</button>
 </div>
 
 </div>
 
-<!-- SOUNDS -->
-<audio id="sndCorrect" src="https://actions.google.com/sounds/v1/cartoon/pop.ogg"></audio>
-<audio id="sndWrong" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg"></audio>
-<audio id="sndEnd" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
+<audio id="good" src="https://actions.google.com/sounds/v1/cartoon/pop.ogg"></audio>
+<audio id="bad" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg"></audio>
 
 <script>
-let cur=0,correct=0,answer,timer,timeLeft;
-let stats=JSON.parse(localStorage.getItem("mathStats"))||{games:0,total:0,correct:0};
+let index=0,correct=0,answer,timer;
+let streak=0;
+let bestStreak=+localStorage.getItem("bestStreak")||0;
+let avatar=localStorage.getItem("avatar")||"🙂";
 
-function showSetup(){home.style.display="none";setup.style.display="block";}
-function showStats(){
-  home.style.display="none";statsDiv.style.display="block";
-  sGames.textContent=stats.games;
-  sTotal.textContent=stats.total;
-  sCorrect.textContent=stats.correct;
-  sAcc.textContent=stats.total?Math.round(stats.correct/stats.total*100):0;
+homeAvatar.textContent=avatar;
+gameAvatar.textContent=avatar;
+resultAvatar.textContent=avatar;
+bestStreakHome.textContent=bestStreak;
+
+document.querySelectorAll(".avatar").forEach(a=>{
+  a.onclick=()=> {
+    document.querySelectorAll(".avatar").forEach(x=>x.classList.remove("selected"));
+    a.classList.add("selected");
+    avatar=a.textContent;
+  }
+});
+
+function saveAvatar(){
+  localStorage.setItem("avatar",avatar);
+  homeAvatar.textContent=avatar;
+  gameAvatar.textContent=avatar;
+  resultAvatar.textContent=avatar;
+  goHome();
 }
-function goHome(){
-  home.style.display="block";
-  setup.style.display=game.style.display=end.style.display=statsDiv.style.display="none";
+
+function openAvatar(){hideAll();avatarPage.style.display="block"}
+function openSetup(){hideAll();setup.style.display="block"}
+function goHome(){hideAll();home.style.display="block"}
+function hideAll(){
+  home.style.display=setup.style.display=
+  game.style.display=result.style.display=
+  avatarPage.style.display="none";
 }
 
 function startGame(){
-  cur=0;correct=0;
-  setup.style.display="none";
-  game.style.display="block";
+  index=0;correct=0;streak=0;
+  hideAll();game.style.display="block";
+  qTotal.textContent=questions.value;
   next();
 }
 
 function next(){
-  if(cur>=+questions.value) return finish();
-  cur++; generate(); startTimer();
+  if(index>=questions.value){end();return;}
+  index++;
+  qIndex.textContent=index;
+  progressFill.style.width=(index/questions.value*100)+"%";
+  gen();
+  startTimer();
 }
 
-function generate(){
+function gen(){
   const d=+difficulty.value;
   let max=[5,10,20,100,999,9999][d-1];
   let ops=[['+'],['+','-'],['+','-','*'],['+','-','*','/'],['+','-','*','/'],['+','-','*','/']][d-1];
@@ -167,63 +214,52 @@ function generate(){
 
   let arr=[answer];
   while(arr.length<4){
-    let f=answer+Math.floor(Math.random()*20-10);
-    if(!arr.includes(f)) arr.push(f);
+    let v=answer+Math.floor(Math.random()*20-10);
+    if(!arr.includes(v)) arr.push(v);
   }
   arr.sort(()=>Math.random()-0.5);
   options.innerHTML="";
   arr.forEach(v=>{
     let btn=document.createElement("button");
     btn.textContent=v;
-    btn.onclick=()=>check(v,btn);
+    btn.onclick=()=>pick(v,btn);
     options.appendChild(btn);
   });
 }
 
-function check(v,btn){
+function pick(v,btn){
   clearInterval(timer);
   if(v===answer){
-    correct++; btn.classList.add("correct"); sndCorrect.play();
+    correct++;streak++;good.play();btn.classList.add("correct");
   }else{
-    btn.classList.add("wrong"); sndWrong.play();
+    streak=0;bad.play();btn.classList.add("wrong");
   }
+  if(streak>bestStreak){
+    bestStreak=streak;
+    localStorage.setItem("bestStreak",bestStreak);
+  }
+  streakEl.textContent=streak;
+  bestStreakEl.textContent=bestStreak;
   setTimeout(next,500);
 }
 
 function startTimer(){
+  let t=Math.max(3,+time.value);
+  timeLeft.textContent=t;
   clearInterval(timer);
-  timeLeft=Math.max(3,+time.value);
-  t.textContent=timeLeft;
-  fill.style.width="100%";
   timer=setInterval(()=>{
-    timeLeft--;
-    t.textContent=timeLeft;
-    fill.style.width=(timeLeft/Math.max(3,time.value)*100)+"%";
-    if(timeLeft<=0){clearInterval(timer);next();}
+    t--;timeLeft.textContent=t;
+    if(t<=0){streak=0;clearInterval(timer);next();}
   },1000);
 }
 
-function finish(){
-  game.style.display="none";
-  end.style.display="block";
-  sndEnd.play();
-  stats.games++;
-  stats.total+=+questions.value;
-  stats.correct+=correct;
-  localStorage.setItem("mathStats",JSON.stringify(stats));
-  end.innerHTML=`
-    <h3>Session Complete</h3>
-    <p>Correct: ${correct}/${questions.value}</p>
-    <button onclick="goHome()">Home</button>
-  `;
+function end(){
+  hideAll();result.style.display="block";
+  scoreText.textContent=`${correct}/${questions.value} correct`;
+  finalStreak.textContent=streak;
+  finalBest.textContent=bestStreak;
 }
 
-const home=document.getElementById("home");
-const setup=document.getElementById("setup");
-const game=document.getElementById("game");
-const end=document.getElementById("end");
-const statsDiv=document.getElementById("stats");
 </script>
-
 </body>
 </html>
