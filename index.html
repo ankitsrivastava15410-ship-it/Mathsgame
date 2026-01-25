@@ -1,245 +1,202 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Math Trainer</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Math Trainer</title>
   <style>
-    :root {
-      --bg: #ffffff;
-      --card: #f6f7f8;
-      --text: #000000;
-      --primary: #58cc02;
-      --danger: #ff4b4b;
-    }
     body {
       margin: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-      background: var(--bg);
-      color: var(--text);
+      font-family: Arial, sans-serif;
+      background: #ffffff;
+      color: #000000;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
+      min-height: 100vh;
     }
     .app {
       width: 100%;
-      max-width: 390px;
-      background: var(--card);
-      border-radius: 24px;
+      max-width: 420px;
       padding: 20px;
-      box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+      box-sizing: border-box;
     }
-    h1 { margin: 0; text-align: center; }
-    .top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .card {
+      border: 2px solid #000;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    label {
+      display: block;
+      margin-bottom: 6px;
       font-weight: bold;
     }
-    .progress {
-      height: 10px;
-      background: #ddd;
-      border-radius: 5px;
-      overflow: hidden;
-      margin: 10px 0;
+    select, button {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      margin-bottom: 12px;
     }
-    .fill {
-      height: 100%;
-      background: var(--primary);
-      width: 0%;
-      transition: width 0.3s;
+    button {
+      background: #000;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    button:disabled {
+      background: #555;
     }
     .question {
       font-size: 28px;
       text-align: center;
       margin: 20px 0;
     }
-    .options {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-    button {
-      padding: 14px;
-      border-radius: 14px;
-      border: none;
-      font-size: 18px;
-      font-weight: bold;
-      cursor: pointer;
+    .options button {
       background: #fff;
-      box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+      color: #000;
+      border: 2px solid #000;
+      margin-bottom: 10px;
     }
-    button.correct { background: var(--primary); color: #fff; }
-    button.wrong { background: var(--danger); color: #fff; }
-    .center { text-align: center; }
-    .hidden { display: none; }
-    .skills button { width: 100%; margin: 6px 0; }
+    .timer, .score {
+      text-align: center;
+      font-size: 18px;
+    }
   </style>
 </head>
 <body>
+  <div class="app">
+    <h1>Math Trainer</h1><div id="setup" class="card">
+  <label>Difficulty</label>
+  <select id="difficulty">
+    <option value="tiny">Tiny Kids</option>
+    <option value="kids">Kids</option>
+    <option value="beginner">Beginner</option>
+    <option value="intermediate">Intermediate</option>
+    <option value="advanced">Advanced</option>
+    <option value="super">Super Advanced</option>
+  </select>
 
-<div class="app">
-  <h1>🧠 Math Trainer</h1>
+  <label>Time per question (seconds)</label>
+  <select id="time">
+    <option value="3">3</option>
+    <option value="5">5</option>
+    <option value="10">10</option>
+    <option value="20">20</option>
+  </select>
 
-  <div id="dashboard">
-    <div class="top">
-      <span>🔥 Streak: <span id="streak">0</span></span>
-      <span>⭐ XP: <span id="xp">0</span></span>
-    </div>
+  <label>Questions per round</label>
+  <select id="count">
+    <option value="5">5</option>
+    <option value="10" selected>10</option>
+    <option value="15">15</option>
+    <option value="20">20</option>
+  </select>
 
-    <h3>Skills</h3>
-    <div class="skills">
-      <button onclick="startSkill('+')">Addition</button>
-      <button onclick="startSkill('-')">Subtraction</button>
-      <button onclick="startSkill('*')">Multiplication</button>
-      <button onclick="startSkill('/')">Division</button>
-      <button onclick="startSkill('mix')">Mixed</button>
-      <button onclick="startSkill('god')">🔥 Super Advanced (Genius)</button>
-    </div>
-  </div>
-
-  <div id="game" class="hidden">
-    <div class="progress"><div id="progressFill" class="fill"></div></div>
-    <div class="question" id="question"></div>
-    <div class="options" id="options"></div>
-  </div>
-
-  <div id="summary" class="hidden center"></div>
+  <button onclick="startGame()">Start</button>
 </div>
 
-<script>
-let xp = +localStorage.getItem('xp') || 0;
-let streak = +localStorage.getItem('streak') || 0;
+<div id="game" class="card" style="display:none">
+  <div class="timer" id="timer"></div>
+  <div class="question" id="question"></div>
+  <div class="options" id="options"></div>
+  <div class="score" id="progress"></div>
+</div>
 
-let round = 0;
-let score = 0;
-let correct;
-let skill;
-const total = 10;
+<div id="end" class="card" style="display:none">
+  <h2>Round Complete</h2>
+  <p id="finalScore"></p>
+  <button onclick="location.reload()">Play Again</button>
+</div>
 
-updateStats();
+  </div>  <script>
+    let settings, current = 0, score = 0, timerInt, timeLeft;
 
-function updateStats() {
-  document.getElementById('xp').textContent = xp;
-  document.getElementById('streak').textContent = streak;
-}
-
-function startSkill(s) {
-  skill = s;
-  round = 0;
-  score = 0;
-  document.getElementById('dashboard').classList.add('hidden');
-  document.getElementById('game').classList.remove('hidden');
-  next();
-}
-
-function next() {
-  if (round >= total) return end();
-  round++;
-  document.getElementById('progressFill').style.width = (round/total*100)+'%';
-  generate();
-}
-
-function generate() {
-  let a, b, c, op;
-
-  if (skill === 'god') {
-    const patterns = ['chain','bigMul','square','divisionTrap'];
-    const pick = patterns[Math.floor(Math.random()*patterns.length)];
-
-    if (pick === 'chain') {
-      a = Math.floor(Math.random()*900)+100;
-      b = Math.floor(Math.random()*90)+10;
-      c = Math.floor(Math.random()*50)+10;
-      correct = a + b * c;
-      document.getElementById('question').textContent = `${a} + ${b} × ${c}`;
-    } else if (pick === 'bigMul') {
-      a = Math.floor(Math.random()*90)+10;
-      b = Math.floor(Math.random()*90)+10;
-      correct = a * b;
-      document.getElementById('question').textContent = `${a} × ${b}`;
-    } else if (pick === 'square') {
-      a = Math.floor(Math.random()*80)+20;
-      correct = a * a;
-      document.getElementById('question').textContent = `${a}²`;
-    } else {
-      b = Math.floor(Math.random()*80)+20;
-      a = b * (Math.floor(Math.random()*50)+20);
-      correct = a / b;
-      document.getElementById('question').textContent = `${a} ÷ ${b}`;
+    function startGame() {
+      settings = {
+        difficulty: difficulty.value,
+        time: Math.max(3, parseInt(time.value)),
+        total: parseInt(count.value)
+      };
+      setup.style.display = 'none';
+      game.style.display = 'block';
+      nextQuestion();
     }
-  } else {
-    op = skill === 'mix'
-      ? ['+','-','*','/'][Math.floor(Math.random()*4)]
-      : skill;
 
-    if (op === '+') {
-      a = Math.floor(Math.random()*300)+100;
-      b = Math.floor(Math.random()*300)+100;
-    } else if (op === '-') {
-      a = Math.floor(Math.random()*500)+200;
-      b = Math.floor(Math.random()*400);
-      if (b > a) [a, b] = [b, a];
-    } else if (op === '*') {
-      a = Math.floor(Math.random()*30)+10;
-      b = Math.floor(Math.random()*30)+10;
-    } else {
-      b = Math.floor(Math.random()*20)+5;
-      a = b * (Math.floor(Math.random()*40)+10);
+    function getConfig(diff) {
+      switch (diff) {
+        case 'tiny': return { max: 5, ops: ['+'] };
+        case 'kids': return { max: 10, ops: ['+', '-'] };
+        case 'beginner': return { max: 20, ops: ['+', '-', '*'] };
+        case 'intermediate': return { max: 100, ops: ['+', '-', '*', '/'] };
+        case 'advanced': return { max: 999, ops: ['+', '-', '*', '/'] };
+        case 'super': return { max: 9999, ops: ['+', '-', '*', '/'] };
+      }
     }
-    correct = eval(a + op + b);
-    document.getElementById('question').textContent = `${a} ${op} ${b}`;
-  }
 
-  let answers = [correct];
-  while (answers.length < 4) {
-    let fake = correct + Math.floor(Math.random()*80-40);
-    if (!answers.includes(fake)) answers.push(fake);
-  }
+    function nextQuestion() {
+      if (current >= settings.total) return endGame();
+      current++;
+      progress.textContent = `Question ${current} / ${settings.total}`;
+      timeLeft = settings.time;
+      timer.textContent = `Time: ${timeLeft}s`;
 
-  answers.sort(() => Math.random() - 0.5);
-  const opt = document.getElementById('options');
-  opt.innerHTML = '';
+      clearInterval(timerInt);
+      timerInt = setInterval(() => {
+        timeLeft--;
+        timer.textContent = `Time: ${timeLeft}s`;
+        if (timeLeft <= 0) {
+          clearInterval(timerInt);
+          nextQuestion();
+        }
+      }, 1000);
 
-  answers.forEach(x => {
-    const btn = document.createElement('button');
-    btn.textContent = x;
-    btn.onclick = () => check(x, btn);
-    opt.appendChild(btn);
-  });
-}
+      generateQuestion();
+    }
 
-function check(val, btn) {
-  if (val === correct) {
-    score++;
-    btn.classList.add('correct');
-  } else {
-    btn.classList.add('wrong');
-    streak = 0;
-  }
-  setTimeout(next, 500);
-}
+    function generateQuestion() {
+      const cfg = getConfig(settings.difficulty);
+      const a = Math.floor(Math.random() * cfg.max) + 1;
+      const b = Math.floor(Math.random() * cfg.max) + 1;
+      const op = cfg.ops[Math.floor(Math.random() * cfg.ops.length)];
 
-function end() {
-  let gained = score * 10;
-  xp += gained;
-  streak++;
-  localStorage.setItem('xp', xp);
-  localStorage.setItem('streak', streak);
+      let correct;
+      switch (op) {
+        case '+': correct = a + b; break;
+        case '-': correct = a - b; break;
+        case '*': correct = a * b; break;
+        case '/': correct = parseFloat((a / b).toFixed(2)); break;
+      }
 
-  document.getElementById('game').classList.add('hidden');
-  const s = document.getElementById('summary');
-  s.classList.remove('hidden');
-  s.innerHTML = `
-    <h2>Lesson Complete 🎉</h2>
-    <p>Score: ${score}/${total}</p>
-    <p>XP Gained: +${gained}</p>
-    <button onclick="location.reload()">Continue</button>
-  `;
-}
-</script>
+      question.textContent = `${a} ${op} ${b}`;
+      options.innerHTML = '';
 
-</body>
+      const answers = new Set([correct]);
+      while (answers.size < 4) {
+        answers.add(correct + Math.floor(Math.random() * 10 - 5));
+      }
+
+      [...answers].sort(() => Math.random() - 0.5).forEach(ans => {
+        const btn = document.createElement('button');
+        btn.textContent = ans;
+        btn.onclick = () => {
+          if (ans === correct) score++;
+          clearInterval(timerInt);
+          nextQuestion();
+        };
+        options.appendChild(btn);
+      });
+    }
+
+    function endGame() {
+      clearInterval(timerInt);
+      game.style.display = 'none';
+      end.style.display = 'block';
+      finalScore.textContent = `Score: ${score} / ${settings.total}`;
+    }
+  </script></body>
 </html>
