@@ -9,29 +9,40 @@ index. html
 <style>
 body{
   margin:0;
-  font-family: system-ui;
-  background:linear-gradient(135deg,#dbeafe,#ffffff);
+  font-family:system-ui;
+  background:#f1f5f9;
+  overflow:hidden;
+}
+
+/* header */
+.header{
+  background:#2563eb;
+  color:#fff;
+  padding:15px;
+  text-align:center;
+  font-weight:bold;
+}
+
+/* container */
+.container{
+  margin-top:70px;
   display:flex;
   justify-content:center;
-  align-items:center;
-  height:100vh;
-  overflow:hidden;
 }
 
 /* card */
 .card{
+  width:90%;
   max-width:360px;
-  padding:25px;
+  padding:20px;
   border-radius:20px;
   background:#fff;
-  box-shadow:0 15px 40px rgba(0,0,0,0.2);
+  box-shadow:0 10px 30px rgba(0,0,0,0.15);
   text-align:center;
-  animation:fade 0.5s ease;
+  position:relative;
 }
 
-h2{margin-bottom:10px}
-p{opacity:0.85; min-height:90px; white-space:pre-line}
-
+/* buttons */
 button{
   width:100%;
   padding:14px;
@@ -40,20 +51,30 @@ button{
   border-radius:12px;
   font-size:16px;
   font-weight:bold;
+  position:relative;
 }
 
-.yes{background:#000;color:#fff}
-.no{background:#eee}
-
-/* animations */
-@keyframes fade{
-  from{opacity:0; transform:translateY(10px)}
-  to{opacity:1}
+.yes{background:#2563eb;color:#fff}
+.no{
+  background:#eee;
+  position:absolute;
 }
 
+/* CHIBI (wavy hair vibe) */
+.chibi{
+  font-size:60px;
+  margin-bottom:10px;
+  animation:bounce 1s infinite;
+}
+
+@keyframes bounce{
+  50%{transform:translateY(-8px)}
+}
+
+/* floating */
 .float{
   position:absolute;
-  font-size:28px;
+  font-size:24px;
   bottom:-50px;
   animation:float 5s linear infinite;
 }
@@ -62,50 +83,33 @@ button{
   to{transform:translateY(-120vh)}
 }
 
-.heart{
-  animation:beat 1s infinite;
-}
-@keyframes beat{
-  50%{transform:scale(1.2)}
-}
-
-/* avatar */
-.avatar{
-  width:100px;
-  height:100px;
+/* music */
+.music{
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  background:#2563eb;
+  color:#fff;
+  padding:12px;
   border-radius:50%;
-  margin:0 auto 10px;
-  background:url('photo.jpg') center/cover no-repeat;
-  box-shadow:0 0 20px rgba(0,0,0,0.3);
-  animation:floatAvatar 3s ease-in-out infinite;
-  border:3px solid #fff;
-}
-
-@keyframes floatAvatar{
-  0%,100%{transform:translateY(0)}
-  50%{transform:translateY(-10px)}
-}
-
-/* music button */
-.top{
-  position:absolute;
-  top:10px;
-  right:10px;
   font-size:20px;
-  cursor:pointer;
 }
 </style>
 </head>
 
 <body>
 
-<div class="top" onclick="toggleMusic()">🔊</div>
+<div class="header">💙 Friendship App</div>
+
+<div class="container">
+  <div id="app"></div>
+</div>
+
+<div class="music" onclick="toggleMusic()">🔊</div>
 
 <audio id="bgMusic" loop>
-  <source src="https://actions.google.com/sounds/v1/ambiences/soft_wind.ogg">
+  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3">
 </audio>
-
-<div id="app"></div>
 
 <script>
 const app=document.getElementById("app");
@@ -117,92 +121,62 @@ function toggleMusic(){
     music.pause();
     event.target.innerText="🔇";
   } else {
-    music.volume = 1.0;
+    music.volume=1.0;
     music.play();
     event.target.innerText="🔊";
   }
   musicOn=!musicOn;
 }
 
-// typing effect
-function typeText(el,text,speed=28){
-  el.innerHTML="";
-  let i=0;
-  let int=setInterval(()=>{
-    el.innerHTML+=text[i];
-    i++;
-    if(i>=text.length) clearInterval(int);
-  },speed);
+// MOVE BUTTON
+function moveButton(btn){
+  const x = Math.random()*200 - 100;
+  const y = Math.random()*200 - 100;
+  btn.style.transform = `translate(${x}px, ${y}px)`;
 }
 
 // MAIN
 function main(){
   app.innerHTML=`
   <div class="card">
-    <div class="avatar"></div>
-    <h2 class="heart">Forgive me Saumya 🥺</h2>
-    <p id="text"></p>
+    <div class="chibi">👩‍🦱✨</div>
+    <h2>Sorry Saumya 😬</h2>
+    <p>
+    I was wrong...\n\n
+    Others are good...\n
+    but YOU are like stevia 😄\n
+    sweeter than them but also healthy for me 💙\n\n
+    Please forgive me yaar 🙏
+    </p>
 
-    <button class="yes" onclick="yes()">Yes, I forgive you ❤️</button>
-    <button class="no" onclick="no1()">I don't 😤</button>
+    <button class="yes" onclick="yes()">Okay I forgive you 👍</button>
+    <button class="no" onclick="moveButton(this)">Nope 😤</button>
   </div>
   `;
-  typeText(document.getElementById("text"),
-  "I know I was wrong...\n\nPlease forgive me 🥺");
 }
 
 // YES
 function yes(){
   app.innerHTML=`
   <div class="card">
-    <div class="avatar"></div>
-    <h2 class="heart">Thank you Saumya ❤️</h2>
-    <p id="text"></p>
+    <div class="chibi">👩‍🦱😎✨</div>
+    <h2>Best Friend Forever 🤝</h2>
+    <p>
+    I knew it 😎\n\n
+    You're honestly one of the best people in my life 🙌\n\n
+    Thanks for always being there 💙
+    </p>
   </div>
   `;
-  typeText(document.getElementById("text"),
-  "You are seriously the best friend I could ever ask for 💫\n\nYou are very important to me 🫶\n\nThank you for forgiving me 🥺\n\nI promise I'll never do it again");
-
   celebration();
-}
-
-// NO 1
-function no1(){
-  app.innerHTML=`
-  <div class="card">
-    <div class="avatar"></div>
-    <h2>Please think again 🥺</h2>
-    <p id="text"></p>
-
-    <button class="yes" onclick="yes()">Okay fine ❤️</button>
-    <button class="no" onclick="no2()">Still no 😤</button>
-  </div>
-  `;
-  typeText(document.getElementById("text"),
-  "You still have time...\n\nDon't do this 😭\n\nI really don't want to lose you 💔\n\nYou're my bestest friend...");
-}
-
-// NO 2
-function no2(){
-  app.innerHTML=`
-  <div class="card">
-    <div class="avatar"></div>
-    <h2>😂 Option Denied</h2>
-    <p id="text"></p>
-
-    <button class="yes" onclick="yes()">Okay I forgive you ❤️</button>
-  </div>
-  `;
-  typeText(document.getElementById("text"),
-  "Plssss naaa 🥺\n\nYou really can't escape this 😂\n\nJust forgive me already ❤️");
 }
 
 // celebration
 function celebration(){
-  for(let i=0;i<25;i++){
+  for(let i=0;i<20;i++){
     let e=document.createElement("div");
     e.className="float";
-    e.innerText=Math.random()>0.5?"🎈":"✨";
+    e.innerText=Math.random()>0.5?"🎉":"✨";
     e.style.left=Math.random()*100+"vw";
     e.style.animationDuration=(3+Math.random()*3)+"s";
     document.body.appendChild(e);
