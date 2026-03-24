@@ -1,287 +1,178 @@
 index.html
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <title>Math Trainer</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <style>
-    :root {
-      --bg: #ffffff;
-      --card: #f6f7f8;
-      --text: #000000;
-      --primary: #58cc02;
-      --danger: #ff4b4b;
-    }
-    body {
-      margin: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-    .app {
-      width: 100%;
-      max-width: 390px;
-      background: var(--card);
-      border-radius: 24px;
-      padding: 20px;
-      box-shadow: 0 15px 40px rgba(0,0,0,0.15);
-      overflow: hidden;
-    }
-    h1 { margin: 0; text-align: center; }/* DUOLINGO STYLE ANIMATION */
-.fade {
-  animation: fadeSlide 0.4s ease;
-}
-@keyframes fadeSlide {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For Saumya 💛</title>
+
+<style>
+body{
+  margin:0;
+  font-family:sans-serif;
+  text-align:center;
+  background:linear-gradient(135deg,#ffeaa7,#fab1a0);
 }
 
-.top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-  font-weight: bold;
+.screen{
+  display:none;
+  padding:20px;
 }
 
-.progress {
-  height: 10px;
-  background: #ddd;
-  border-radius: 5px;
-  overflow: hidden;
-  margin: 10px 0;
+.active{
+  display:block;
 }
 
-.fill {
-  height: 100%;
-  background: var(--primary);
-  width: 0%;
-  transition: width 0.3s;
+button{
+  padding:12px 18px;
+  margin:10px;
+  font-size:16px;
+  border:none;
+  border-radius:12px;
+  cursor:pointer;
 }
 
-.question {
-  font-size: 28px;
-  text-align: center;
-  margin: 20px 0;
-  animation: pop 0.3s ease;
+.yes{background:#55efc4;}
+.no{background:#ff7675;}
+
+.emoji{
+  font-size:60px;
+  animation:bounce 1s infinite;
 }
 
-@keyframes pop {
-  0% { transform: scale(0.8); }
-  100% { transform: scale(1); }
+@keyframes bounce{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-10px);}
 }
 
-.options {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
+.highlight{
+  background:#fff3cd;
+  padding:12px;
+  border-radius:12px;
+  font-weight:900;
+  font-size:18px;
 }
 
-button {
-  padding: 14px;
-  border-radius: 14px;
-  border: none;
-  font-size: 18px;
-  font-weight: bold;
-  cursor: pointer;
-  background: #fff;
-  box-shadow: 0 4px 0 rgba(0,0,0,0.1);
-  transition: transform 0.1s;
+.float{
+  position:fixed;
+  animation:floatUp linear forwards;
 }
 
-button:active {
-  transform: scale(0.95);
+@keyframes floatUp{
+  from{transform:translateY(0);}
+  to{transform:translateY(-120vh);}
 }
-
-button.correct {
-  background: var(--primary);
-  color: #fff;
-}
-
-button.wrong {
-  background: var(--danger);
-  color: #fff;
-}
-
-.center { text-align: center; }
-.hidden { display: none; }
-.skills button { width: 100%; margin: 6px 0; }
-
-/* CELEBRATION FLOAT */
-.float {
-  position: absolute;
-  animation: floatUp linear forwards;
-}
-
-@keyframes floatUp {
-  from { transform: translateY(0); }
-  to { transform: translateY(-120vh); }
-}
-
-/* PUNJABI HIGHLIGHT */
-.highlight {
-  background: #fff3cd;
-  padding: 12px;
-  border-radius: 12px;
-  margin-top: 12px;
-  font-weight: 900;
-  font-size: 18px;
-  color: #b45309;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-
-  </style>
+</style>
 </head>
-<body><div class="app fade">
-  <h1>🧠 Math Trainer</h1>  <div id="dashboard">
-    <div class="top">
-      <span>🔥 Streak: <span id="streak">0</span></span>
-      <span>⭐ XP: <span id="xp">0</span></span>
-    </div><h3>Skills</h3>
-<div class="skills">
-  <button onclick="startSkill('+')">Addition</button>
-  <button onclick="startSkill('-')">Subtraction</button>
-  <button onclick="startSkill('*')">Multiplication</button>
-  <button onclick="startSkill('/')">Division</button>
-  <button onclick="startSkill('mix')">Mixed</button>
-  <button onclick="startSkill('god')">🔥 Super Advanced (Genius)</button>
+
+<body>
+
+<audio id="bgm" autoplay loop>
+  <source src="song.mp3" type="audio/mp3">
+</audio>
+
+<div id="s1" class="screen active">
+  <div class="emoji" id="emo">🙂</div>
+  <h2 id="name">Saumya jii 💛</h2>
+  <p>forgive me...</p>
+  <button class="yes" onclick="yes()">Yes I forgive u</button>
+  <button class="no" id="noBtn">I don't</button>
 </div>
 
-  </div>  <div id="game" class="hidden fade">
-    <div class="progress"><div id="progressFill" class="fill"></div></div>
-    <div class="question" id="question"></div>
-    <div class="options" id="options"></div>
-  </div>  <div id="summary" class="hidden center fade"></div>
-</div><script>
-let xp = +localStorage.getItem('xp') || 0;
-let streak = +localStorage.getItem('streak') || 0;
+<div id="s2" class="screen">
+  <div class="emoji">🥲</div>
+  <p>pls forgive me... u are my bestest friend</p>
+  <button class="yes" onclick="yes()">Yes</button>
+  <button class="no" id="noBtn2">I don't</button>
+</div>
 
-let round = 0;
-let score = 0;
-let correct;
-let skill;
-const total = 10;
+<div id="s3" class="screen">
+  <h2>😭 pls na...</h2>
+  <p>u still have time choose correctly</p>
+  <button class="yes" onclick="yes()">Final chance</button>
+</div>
 
-updateStats();
+<div id="s4" class="screen">
+  <h2>Thank you 💛</h2>
 
-function updateStats() {
-  document.getElementById('xp').textContent = xp;
-  document.getElementById('streak').textContent = streak;
+  <p>
+  U are truly one of the best things of my life 💛<br>
+  I never get tired of talking with u 😄<br>
+  and u are the best friend I could have asked for 🍜<br><br>
+
+  I am truly sorry for not expressing myself<br>
+  and not being a good friend as u were 😔<br><br>
+
+  pls forgive me<br><br>
+
+  Others are gud…<br>
+  and u are stevia 😄💛<br>
+  sweeter than them but healthy and good for me 🍜✨
+  </p>
+
+  <div class="highlight">
+    Tussi hamare vadhiya mitr ho 💛<br>
+    te tussi mere naal gussa na kariya karo jii 😔
+  </div>
+
+</div>
+
+<script>
+let escape=0;
+const max=5;
+
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
 }
 
-function startSkill(s) {
-  skill = s;
-  round = 0;
-  score = 0;
-  document.getElementById('dashboard').classList.add('hidden');
-  document.getElementById('game').classList.remove('hidden');
-  next();
+function yes(){
+  show('s4');
+  celebrate();
 }
 
-function next() {
-  if (round >= total) return end();
-  round++;
-  document.getElementById('progressFill').style.width = (round/total*100)+'%';
-  generate();
+function move(btn){
+  btn.style.position='fixed';
+  btn.style.left=Math.random()*80+'vw';
+  btn.style.top=Math.random()*80+'vh';
 }
 
-function generate() {
-  let a, b, op;
-
-  op = skill === 'mix'
-    ? ['+','-','*','/'][Math.floor(Math.random()*4)]
-    : skill;
-
-  if (op === '+') {
-    a = Math.floor(Math.random()*100);
-    b = Math.floor(Math.random()*100);
-  } else if (op === '-') {
-    a = Math.floor(Math.random()*100);
-    b = Math.floor(Math.random()*100);
-    if (b > a) [a,b]=[b,a];
-  } else if (op === '*') {
-    a = Math.floor(Math.random()*20);
-    b = Math.floor(Math.random()*20);
-  } else {
-    b = Math.floor(Math.random()*10)+1;
-    a = b * (Math.floor(Math.random()*10));
+function setup(btn,id){
+  btn.onclick=(e)=>{
+    if(escape<max){
+      e.preventDefault();
+      escape++;
+      document.getElementById("emo").innerText="🤨";
+      move(btn);
+    }else{
+      show(id);
+    }
   }
-
-  correct = eval(a+op+b);
-  document.getElementById('question').textContent = `${a} ${op} ${b}`;
-
-  let answers=[correct];
-  while(answers.length<4){
-    let fake = correct + Math.floor(Math.random()*20-10);
-    if(!answers.includes(fake)) answers.push(fake);
-  }
-
-  answers.sort(()=>Math.random()-0.5);
-  const opt=document.getElementById('options');
-  opt.innerHTML='';
-
-  answers.forEach(x=>{
-    const btn=document.createElement('button');
-    btn.textContent=x;
-    btn.onclick=()=>check(x,btn);
-    opt.appendChild(btn);
-  });
 }
 
-function check(val,btn){
-  if(val===correct){
-    score++;
-    btn.classList.add('correct');
-    celebrate();
-  }else{
-    btn.classList.add('wrong');
-    streak=0;
-  }
-  setTimeout(next,500);
-}
-
-function end(){
-  let gained=score*10;
-  xp+=gained;
-  streak++;
-
-  localStorage.setItem('xp',xp);
-  localStorage.setItem('streak',streak);
-
-  document.getElementById('game').classList.add('hidden');
-  const s=document.getElementById('summary');
-  s.classList.remove('hidden');
-
-  s.innerHTML=`
-    <h2>Lesson Complete 🎉</h2>
-    <p>Score: ${score}/${total}</p>
-    <p>XP Gained: +${gained}</p>
-
-    <div class="highlight">
-      Tussi hamare vadhiya mitr ho 💛<br>
-      te tussi mere naal gussa na kariya karo jii 😔
-    </div>
-
-    <button onclick="location.reload()">Continue</button>
-  `;
-}
+setup(document.getElementById("noBtn"),"s2");
+setup(document.getElementById("noBtn2"),"s3");
 
 function celebrate(){
-  for(let i=0;i<20;i++){
-    let e=document.createElement('div');
-    e.className='float';
-    e.innerText=Math.random()>0.5?'🎈':'✨';
-    e.style.left=Math.random()*100+'vw';
-    e.style.bottom=(-Math.random()*100)+'px';
-    e.style.fontSize=(16+Math.random()*20)+'px';
-    e.style.animationDuration=(2+Math.random()*3)+'s';
+  for(let i=0;i<25;i++){
+    let e=document.createElement("div");
+    e.className="float";
+    e.innerText=Math.random()>0.5?"🎈":"✨";
+    e.style.left=Math.random()*100+"vw";
+    e.style.bottom="-50px";
+    e.style.fontSize=(20+Math.random()*20)+"px";
+    e.style.animationDuration=(2+Math.random()*3)+"s";
     document.body.appendChild(e);
     setTimeout(()=>e.remove(),4000);
   }
 }
-</script></body>
+
+// name rotation
+const names=["saumya jii 💛","maggi paglu 🍜","peeli pari 🌼"];
+setInterval(()=>{
+  document.getElementById("name").innerText=
+    names[Math.floor(Math.random()*names.length)];
+},2000);
+</script>
+
+</body>
 </html>
