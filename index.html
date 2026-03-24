@@ -13,24 +13,39 @@ body{
   background:linear-gradient(135deg,#fff7ed,#fde68a);
 }
 
-/* MOBILE SAFE APP */
 .app{
   min-height:100vh;
   display:flex;
   flex-direction:column;
   justify-content:space-between;
   padding:20px;
-  box-sizing:border-box;
 }
 
-/* CONTENT */
-.card{
-  text-align:center;
+.card{text-align:center}
+
+/* 🎯 EMOJI ANIMATION */
+.emoji{
+  font-size:60px;
+  margin:15px 0;
+  animation:fadeIn 1s ease, bounce 2s infinite;
+  cursor:pointer;
+  transition:0.3s;
 }
 
-/* BUTTON AREA */
-.btns{
-  position:relative;
+.emoji:active{
+  transform:scale(1.3) rotate(10deg);
+}
+
+/* bounce */
+@keyframes bounce{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-10px)}
+}
+
+/* fade */
+@keyframes fadeIn{
+  from{opacity:0;transform:scale(0.5)}
+  to{opacity:1;transform:scale(1)}
 }
 
 /* BUTTONS */
@@ -45,72 +60,7 @@ button{
 }
 
 .yes{background:#f59e0b;color:white}
-.no{
-  background:#eee;
-  position:relative;
-}
-
-/* CHIBI */
-.chibi{
-  position:relative;
-  width:100px;
-  height:120px;
-  margin:0 auto 10px;
-}
-
-.face{
-  width:70px;
-  height:70px;
-  background:#ffe0bd;
-  border-radius:50%;
-  position:absolute;
-  top:30px;
-  left:15px;
-}
-
-.hair{
-  width:90px;
-  height:60px;
-  background:#111;
-  border-radius:50%;
-  position:absolute;
-  top:0;
-  left:5px;
-}
-
-.wave{
-  width:20px;
-  height:20px;
-  background:#111;
-  border-radius:50%;
-  position:absolute;
-  bottom:-5px;
-}
-
-.w1{left:5px}
-.w2{left:30px}
-.w3{right:5px}
-
-.eye{
-  width:8px;
-  height:8px;
-  background:black;
-  border-radius:50%;
-  position:absolute;
-  top:55px;
-}
-.e1{left:35px}
-.e2{right:35px}
-
-.mouth{
-  width:20px;
-  height:10px;
-  border-bottom:2px solid black;
-  border-radius:0 0 10px 10px;
-  position:absolute;
-  top:70px;
-  left:40px;
-}
+.no{background:#eee;position:relative}
 
 /* FLOAT */
 .float{
@@ -127,7 +77,6 @@ button{
 
 <body>
 
-<!-- 🎵 IMPORTANT: CHANGE NAME IF NEEDED -->
 <audio id="bgm" loop>
   <source src="song.mp3" type="audio/mp3">
 </audio>
@@ -138,26 +87,8 @@ button{
 const app = document.getElementById("app");
 let escapeCount = 0;
 
-/* PLAY MUSIC ON BUTTON CLICK */
 function playMusic(){
-  const music = document.getElementById("bgm");
-  music.play().catch(()=>{});
-}
-
-/* CHIBI */
-function chibi(){
-return `
-<div class="chibi">
-  <div class="hair"></div>
-  <div class="wave w1"></div>
-  <div class="wave w2"></div>
-  <div class="wave w3"></div>
-  <div class="face"></div>
-  <div class="eye e1"></div>
-  <div class="eye e2"></div>
-  <div class="mouth"></div>
-</div>
-`;
+  document.getElementById("bgm").play().catch(()=>{});
 }
 
 /* START */
@@ -165,7 +96,7 @@ function start(){
 app.innerHTML = `
 <div class="app">
   <div class="card">
-    ${chibi()}
+    <div class="emoji" id="mainEmoji" onclick="reactEmoji()">🙃🥲</div>
     <h2>Forgive me Saumya 😔</h2>
 
     <p>
@@ -175,7 +106,7 @@ sweeter than them but healthy and good for me 🍜✨
     </p>
   </div>
 
-  <div class="btns">
+  <div>
     <button class="yes" onclick="playMusic(); page2()">Yes 😊</button>
     <button class="no" id="noBtn">I don't 😒</button>
   </div>
@@ -185,6 +116,7 @@ sweeter than them but healthy and good for me 🍜✨
 const btn = document.getElementById("noBtn");
 
 btn.onclick = (e)=>{
+  changeToSuspicious();
   if(escapeCount < 6){
     e.preventDefault();
     escapeCount++;
@@ -195,12 +127,25 @@ btn.onclick = (e)=>{
 };
 }
 
-/* MOVE INSIDE SCREEN */
-function move(btn){
-  const container = document.querySelector(".btns");
+/* 😈 CHANGE EMOJI ON "I DON'T" */
+function changeToSuspicious(){
+  const emoji = document.getElementById("mainEmoji");
+  if(emoji){
+    emoji.innerText = "🤨";
+  }
+}
 
-  const maxX = container.clientWidth - btn.offsetWidth;
-  const maxY = 150;
+/* 👆 CLICK EMOJI REACTION */
+function reactEmoji(){
+  const emoji = document.getElementById("mainEmoji");
+  const reactions = ["🙂","🥲","😭","🙃","😄"];
+  emoji.innerText = reactions[Math.floor(Math.random()*reactions.length)];
+}
+
+/* MOVE BUTTON */
+function move(btn){
+  const maxX = window.innerWidth - btn.offsetWidth - 20;
+  const maxY = 200;
 
   const x = Math.random() * maxX;
   const y = Math.random() * maxY;
@@ -210,17 +155,41 @@ function move(btn){
   btn.style.top = y + "px";
 }
 
-/* REST SAME FLOW */
-function page2(){ app.innerHTML=`<div class="app"><div class="card">${chibi()}<h2>I was wrong 😭</h2><p>pls forgive me 😔💛🍜</p></div><button class="yes" onclick="page3()">Continue ➡</button></div>`;}
-function page3(){ app.innerHTML=`<div class="app"><div class="card">${chibi()}<h2>You matter 💛</h2><p>I don’t want to lose u 😭</p></div><button class="yes" onclick="page4()">Next ➡</button></div>`;}
+/* YES FLOW */
+function page2(){
+app.innerHTML = `
+<div class="app">
+  <div class="card">
+    <div class="emoji">🥲😭</div>
+    <h2>I was wrong 😭</h2>
+    <p>pls forgive me 😔💛</p>
+  </div>
+  <button class="yes" onclick="page3()">Continue ➡</button>
+</div>
+`;
+}
+
+function page3(){
+app.innerHTML = `
+<div class="app">
+  <div class="card">
+    <div class="emoji">🙂💛</div>
+    <h2>You matter</h2>
+    <p>I don’t want to lose u 😭</p>
+  </div>
+  <button class="yes" onclick="page4()">Next ➡</button>
+</div>
+`;
+}
 
 function page4(){
-app.innerHTML=`
+app.innerHTML = `
 <div class="app">
-<div class="card">
-${chibi()}
-<h2>From my heart 💛</h2>
-<p>
+  <div class="card">
+    <div class="emoji">🤨🥲</div>
+    <h2>From my heart 💛</h2>
+
+    <p>
 U are truly one of the best things of my life 💛  
 I never get tired of talking with u 😄  
 and u are the best friend I could have asked for 🍜  
@@ -237,24 +206,49 @@ and I am truly sorry for not expressing myself
 and being a good friend as u were  
 
 I will try to become a good friend from now on 🤝✨  
-</p>
+    </p>
+  </div>
+
+  <button class="yes" onclick="finalYes()">Forgive 😊</button>
 </div>
-<button class="yes" onclick="finalYes()">Forgive 😊</button>
-</div>`;
+`;
 }
 
-function finalYes(){ app.innerHTML=`<div class="app"><div class="card">${chibi()}<h2>Thank You Saumya 💛🎉</h2></div></div>`; celebrate(); }
+function finalYes(){
+app.innerHTML = `
+<div class="app">
+  <div class="card">
+    <div class="emoji">🎉🙂🍜</div>
+    <h2>Thank You Saumya 💛</h2>
+  </div>
+</div>
+`;
+celebrate();
+}
 
-function pageNo1(){ app.innerHTML=`<div class="app"><div class="card">${chibi()}<h2>Please 😭</h2></div><button class="yes" onclick="page2()">Okay fine 😅</button></div>`;}
+/* NO FLOW */
+function pageNo1(){
+app.innerHTML = `
+<div class="app">
+  <div class="card">
+    <div class="emoji">😭🥲</div>
+    <h2>Please 😭</h2>
+  </div>
 
+  <button class="yes" onclick="page2()">Okay fine 😅</button>
+</div>
+`;
+}
+
+/* CELEBRATION */
 function celebrate(){
 for(let i=0;i<30;i++){
-let e=document.createElement("div");
-e.className="float";
-e.innerText=Math.random()>0.5?"🎈":"✨";
-e.style.left=Math.random()*100+"vw";
-document.body.appendChild(e);
-setTimeout(()=>e.remove(),6000);
+  let e=document.createElement("div");
+  e.className="float";
+  e.innerText=Math.random()>0.5?"🎈":"✨";
+  e.style.left=Math.random()*100+"vw";
+  document.body.appendChild(e);
+  setTimeout(()=>e.remove(),6000);
 }
 }
 
