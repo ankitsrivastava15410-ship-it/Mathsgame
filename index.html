@@ -1,265 +1,217 @@
+index. html
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Math Trainer</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Forgive Me Saumya</title>
+
 <style>
 body{
   margin:0;
-  font-family: system-ui, -apple-system, Arial;
-  background:#fff;
+  font-family: system-ui;
+  background:linear-gradient(135deg,#dbeafe,#ffffff);
   display:flex;
   justify-content:center;
   align-items:center;
-  min-height:100vh;
+  height:100vh;
+  overflow:hidden;
 }
-.app{width:100%;max-width:390px;padding:20px}
+
+/* card */
 .card{
-  background:#fff;
+  max-width:360px;
+  padding:25px;
   border-radius:20px;
-  padding:20px;
-  box-shadow:0 12px 30px rgba(0,0,0,.15);
+  background:#fff;
+  box-shadow:0 15px 40px rgba(0,0,0,0.2);
+  text-align:center;
+  animation:fade 0.5s ease;
 }
-h2,h3{margin:10px 0}
-button,select,input{
+
+h2{margin-bottom:10px}
+p{opacity:0.85; min-height:90px; white-space:pre-line}
+
+button{
   width:100%;
   padding:14px;
-  font-size:16px;
   margin-top:10px;
-  border-radius:12px;
-  border:1px solid #ccc;
-}
-button{
-  background:#000;
-  color:#fff;
   border:none;
-  font-weight:700;
+  border-radius:12px;
+  font-size:16px;
+  font-weight:bold;
 }
-.secondary{background:#f2f2f2;color:#000}
-.center{text-align:center}
-.fade{opacity:.7}
-.big{font-size:22px;font-weight:800}
+
+.yes{background:#000;color:#fff}
+.no{background:#eee}
+
+/* animations */
+@keyframes fade{
+  from{opacity:0; transform:translateY(10px)}
+  to{opacity:1}
+}
+
+.float{
+  position:absolute;
+  font-size:28px;
+  bottom:-50px;
+  animation:float 5s linear infinite;
+}
+
+@keyframes float{
+  to{transform:translateY(-120vh)}
+}
+
+.heart{
+  animation:beat 1s infinite;
+}
+@keyframes beat{
+  50%{transform:scale(1.2)}
+}
+
+/* avatar */
 .avatar{
-  font-size:48px;
+  width:100px;
+  height:100px;
+  border-radius:50%;
+  margin:0 auto 10px;
+  background:url('photo.jpg') center/cover no-repeat;
+  box-shadow:0 0 20px rgba(0,0,0,0.3);
+  animation:floatAvatar 3s ease-in-out infinite;
+  border:3px solid #fff;
+}
+
+@keyframes floatAvatar{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-10px)}
+}
+
+/* music button */
+.top{
+  position:absolute;
+  top:10px;
+  right:10px;
+  font-size:20px;
   cursor:pointer;
-  margin:8px;
-  display:inline-block;
 }
-.avatar.selected{outline:3px solid #000;border-radius:12px}
-.progress{
-  height:8px;background:#e0e0e0;border-radius:5px;overflow:hidden
-}
-.progress-fill{height:100%;background:#000;width:0%}
-.stats{
-  display:flex;
-  justify-content:space-between;
-  font-size:14px;
-  font-weight:600;
-}
-.options button{background:#f6f6f6;color:#000}
-.correct{background:#4caf50!important;color:#fff}
-.wrong{background:#e53935!important;color:#fff}
 </style>
 </head>
+
 <body>
 
-<div class="app">
+<div class="top" onclick="toggleMusic()">🔊</div>
 
-<!-- HOME -->
-<div id="home" class="card center">
-  <div id="homeAvatar" class="big">🙂</div>
-  <h2>Math Trainer</h2>
-  <p class="fade">Train your brain daily</p>
-  <p>🔥 Best Streak: <span id="bestStreakHome">0</span></p>
-  <button onclick="openAvatar()">Choose Avatar</button>
-  <button onclick="openSetup()">Start Lesson</button>
-</div>
+<audio id="bgMusic" loop>
+  <source src="https://actions.google.com/sounds/v1/ambiences/soft_wind.ogg">
+</audio>
 
-<!-- AVATAR -->
-<div id="avatarPage" class="card center" style="display:none">
-  <h3>Choose your avatar</h3>
-  <div id="avatars">
-    <span class="avatar">🙂</span>
-    <span class="avatar">😎</span>
-    <span class="avatar">🧠</span>
-    <span class="avatar">👩‍🚀</span>
-    <span class="avatar">👨‍💻</span>
-    <span class="avatar">🦉</span>
-  </div>
-  <button onclick="saveAvatar()">Save</button>
-  <button class="secondary" onclick="goHome()">Back</button>
-</div>
-
-<!-- SETUP -->
-<div id="setup" class="card" style="display:none">
-  <h3>Game Setup</h3>
-  <label>Difficulty</label>
-  <select id="difficulty">
-    <option value="1">Tiny Kids</option>
-    <option value="2">Kids</option>
-    <option value="3">Beginner</option>
-    <option value="4">Intermediate</option>
-    <option value="5">Advanced</option>
-    <option value="6">Super Advanced</option>
-  </select>
-
-  <label>Time per question (sec)</label>
-  <input type="number" id="time" min="3" value="5">
-
-  <label>Questions</label>
-  <select id="questions">
-    <option>5</option><option selected>10</option>
-    <option>15</option><option>20</option>
-  </select>
-
-  <button onclick="startGame()">Start</button>
-  <button class="secondary" onclick="goHome()">Back</button>
-</div>
-
-<!-- GAME -->
-<div id="game" class="card" style="display:none">
-  <div class="center big" id="gameAvatar">🙂</div>
-  <div class="progress"><div id="progressFill" class="progress-fill"></div></div>
-
-  <div class="stats">
-    <div>🔥 <span id="streak">0</span></div>
-    <div>🏆 <span id="bestStreak">0</span></div>
-  </div>
-
-  <p class="fade">Question <span id="qIndex"></span>/<span id="qTotal"></span></p>
-  <h3 id="question" class="big"></h3>
-  <p>⏱ <span id="timeLeft"></span>s</p>
-  <div id="options" class="options"></div>
-</div>
-
-<!-- RESULT -->
-<div id="result" class="card center" style="display:none">
-  <div class="big" id="resultAvatar">🙂</div>
-  <h3>Lesson Complete</h3>
-  <p id="scoreText" class="big"></p>
-  <p>🔥 Streak: <span id="finalStreak"></span></p>
-  <p>🏆 Best: <span id="finalBest"></span></p>
-  <button onclick="openSetup()">Next Lesson</button>
-  <button class="secondary" onclick="goHome()">Home</button>
-</div>
-
-</div>
-
-<audio id="good" src="https://actions.google.com/sounds/v1/cartoon/pop.ogg"></audio>
-<audio id="bad" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg"></audio>
+<div id="app"></div>
 
 <script>
-let index=0,correct=0,answer,timer;
-let streak=0;
-let bestStreak=+localStorage.getItem("bestStreak")||0;
-let avatar=localStorage.getItem("avatar")||"🙂";
+const app=document.getElementById("app");
+const music=document.getElementById("bgMusic");
+let musicOn=false;
 
-homeAvatar.textContent=avatar;
-gameAvatar.textContent=avatar;
-resultAvatar.textContent=avatar;
-bestStreakHome.textContent=bestStreak;
-
-document.querySelectorAll(".avatar").forEach(a=>{
-  a.onclick=()=> {
-    document.querySelectorAll(".avatar").forEach(x=>x.classList.remove("selected"));
-    a.classList.add("selected");
-    avatar=a.textContent;
+function toggleMusic(){
+  if(musicOn){
+    music.pause();
+    event.target.innerText="🔇";
+  } else {
+    music.volume = 1.0;
+    music.play();
+    event.target.innerText="🔊";
   }
-});
-
-function saveAvatar(){
-  localStorage.setItem("avatar",avatar);
-  homeAvatar.textContent=avatar;
-  gameAvatar.textContent=avatar;
-  resultAvatar.textContent=avatar;
-  goHome();
+  musicOn=!musicOn;
 }
 
-function openAvatar(){hideAll();avatarPage.style.display="block"}
-function openSetup(){hideAll();setup.style.display="block"}
-function goHome(){hideAll();home.style.display="block"}
-function hideAll(){
-  home.style.display=setup.style.display=
-  game.style.display=result.style.display=
-  avatarPage.style.display="none";
+// typing effect
+function typeText(el,text,speed=28){
+  el.innerHTML="";
+  let i=0;
+  let int=setInterval(()=>{
+    el.innerHTML+=text[i];
+    i++;
+    if(i>=text.length) clearInterval(int);
+  },speed);
 }
 
-function startGame(){
-  index=0;correct=0;streak=0;
-  hideAll();game.style.display="block";
-  qTotal.textContent=questions.value;
-  next();
+// MAIN
+function main(){
+  app.innerHTML=`
+  <div class="card">
+    <div class="avatar"></div>
+    <h2 class="heart">Forgive me Saumya 🥺</h2>
+    <p id="text"></p>
+
+    <button class="yes" onclick="yes()">Yes, I forgive you ❤️</button>
+    <button class="no" onclick="no1()">I don't 😤</button>
+  </div>
+  `;
+  typeText(document.getElementById("text"),
+  "I know I was wrong...\n\nPlease forgive me 🥺");
 }
 
-function next(){
-  if(index>=questions.value){end();return;}
-  index++;
-  qIndex.textContent=index;
-  progressFill.style.width=(index/questions.value*100)+"%";
-  gen();
-  startTimer();
+// YES
+function yes(){
+  app.innerHTML=`
+  <div class="card">
+    <div class="avatar"></div>
+    <h2 class="heart">Thank you Saumya ❤️</h2>
+    <p id="text"></p>
+  </div>
+  `;
+  typeText(document.getElementById("text"),
+  "You are seriously the best friend I could ever ask for 💫\n\nYou are very important to me 🫶\n\nThank you for forgiving me 🥺\n\nI promise I'll never do it again");
+
+  celebration();
 }
 
-function gen(){
-  const d=+difficulty.value;
-  let max=[5,10,20,100,999,9999][d-1];
-  let ops=[['+'],['+','-'],['+','-','*'],['+','-','*','/'],['+','-','*','/'],['+','-','*','/']][d-1];
-  let a=Math.floor(Math.random()*max)+1;
-  let b=Math.floor(Math.random()*max)+1;
-  let op=ops[Math.floor(Math.random()*ops.length)];
-  if(op==='/') a=a*b;
-  answer=eval(a+op+b);
-  question.textContent=`${a} ${op} ${b}`;
+// NO 1
+function no1(){
+  app.innerHTML=`
+  <div class="card">
+    <div class="avatar"></div>
+    <h2>Please think again 🥺</h2>
+    <p id="text"></p>
 
-  let arr=[answer];
-  while(arr.length<4){
-    let v=answer+Math.floor(Math.random()*20-10);
-    if(!arr.includes(v)) arr.push(v);
+    <button class="yes" onclick="yes()">Okay fine ❤️</button>
+    <button class="no" onclick="no2()">Still no 😤</button>
+  </div>
+  `;
+  typeText(document.getElementById("text"),
+  "You still have time...\n\nDon't do this 😭\n\nI really don't want to lose you 💔\n\nYou're my bestest friend...");
+}
+
+// NO 2
+function no2(){
+  app.innerHTML=`
+  <div class="card">
+    <div class="avatar"></div>
+    <h2>😂 Option Denied</h2>
+    <p id="text"></p>
+
+    <button class="yes" onclick="yes()">Okay I forgive you ❤️</button>
+  </div>
+  `;
+  typeText(document.getElementById("text"),
+  "Plssss naaa 🥺\n\nYou really can't escape this 😂\n\nJust forgive me already ❤️");
+}
+
+// celebration
+function celebration(){
+  for(let i=0;i<25;i++){
+    let e=document.createElement("div");
+    e.className="float";
+    e.innerText=Math.random()>0.5?"🎈":"✨";
+    e.style.left=Math.random()*100+"vw";
+    e.style.animationDuration=(3+Math.random()*3)+"s";
+    document.body.appendChild(e);
+    setTimeout(()=>e.remove(),6000);
   }
-  arr.sort(()=>Math.random()-0.5);
-  options.innerHTML="";
-  arr.forEach(v=>{
-    let btn=document.createElement("button");
-    btn.textContent=v;
-    btn.onclick=()=>pick(v,btn);
-    options.appendChild(btn);
-  });
 }
 
-function pick(v,btn){
-  clearInterval(timer);
-  if(v===answer){
-    correct++;streak++;good.play();btn.classList.add("correct");
-  }else{
-    streak=0;bad.play();btn.classList.add("wrong");
-  }
-  if(streak>bestStreak){
-    bestStreak=streak;
-    localStorage.setItem("bestStreak",bestStreak);
-  }
-  streakEl.textContent=streak;
-  bestStreakEl.textContent=bestStreak;
-  setTimeout(next,500);
-}
-
-function startTimer(){
-  let t=Math.max(3,+time.value);
-  timeLeft.textContent=t;
-  clearInterval(timer);
-  timer=setInterval(()=>{
-    t--;timeLeft.textContent=t;
-    if(t<=0){streak=0;clearInterval(timer);next();}
-  },1000);
-}
-
-function end(){
-  hideAll();result.style.display="block";
-  scoreText.textContent=`${correct}/${questions.value} correct`;
-  finalStreak.textContent=streak;
-  finalBest.textContent=bestStreak;
-}
-
+main();
 </script>
+
 </body>
 </html>
