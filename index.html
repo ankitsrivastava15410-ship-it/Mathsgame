@@ -9,110 +9,48 @@ index.html
 <style>
 body{
   margin:0;
-  font-family:system-ui;
-  background:linear-gradient(135deg,#dbeafe,#f1f5f9);
+  font-family:Arial;
+  background:linear-gradient(135deg,#dbeafe,#f8fafc);
   display:flex;
   justify-content:center;
   align-items:center;
   height:100vh;
 }
 
-/* CARD */
 .card{
   width:90%;
-  max-width:360px;
-  padding:20px;
-  border-radius:20px;
+  max-width:350px;
   background:white;
-  box-shadow:0 10px 30px rgba(0,0,0,0.15);
+  padding:20px;
+  border-radius:15px;
   text-align:center;
+  box-shadow:0 10px 25px rgba(0,0,0,0.15);
   position:relative;
 }
 
-/* BUTTONS */
 button{
   width:100%;
-  padding:14px;
+  padding:12px;
   margin-top:10px;
   border:none;
-  border-radius:12px;
-  font-size:16px;
+  border-radius:10px;
+  font-size:15px;
   font-weight:bold;
 }
 
 .yes{background:#2563eb;color:white}
-.no{
-  background:#eee;
-  position:absolute;
-}
+.no{background:#eee;position:absolute}
 
-/* CHIBI CHARACTER */
+/* simple chibi */
 .chibi{
-  width:100px;
-  height:120px;
-  margin:auto;
-  position:relative;
+  font-size:50px;
+  margin-bottom:10px;
 }
 
-.face{
-  width:70px;
-  height:70px;
-  background:#ffe0bd;
-  border-radius:50%;
-  position:absolute;
-  left:15px;
-  top:25px;
-}
-
-.hair{
-  width:90px;
-  height:60px;
-  background:#222;
-  border-radius:50%;
-  position:absolute;
-  top:0;
-  left:5px;
-}
-
-/* WAVY HAIR */
-.hair::before,.hair::after{
-  content:'';
-  position:absolute;
-  width:40px;
-  height:40px;
-  background:#222;
-  border-radius:50%;
-}
-
-.hair::before{left:-10px;top:20px}
-.hair::after{right:-10px;top:20px}
-
-.eye{
-  width:8px;
-  height:8px;
-  background:black;
-  border-radius:50%;
-  position:absolute;
-  top:50px;
-}
-
-.eye.left{left:30px}
-.eye.right{right:30px}
-
-.mouth{
-  width:20px;
-  height:10px;
-  border-bottom:2px solid black;
-  border-radius:0 0 20px 20px;
-  position:absolute;
-  top:65px;
-  left:40px;
-}
-
-/* FLOATING EFFECT */
+/* floating */
 .float{
   position:absolute;
-  font-size:20px;
+  font-size:22px;
   animation:float 5s linear infinite;
 }
 
@@ -131,54 +69,49 @@ button{
 </audio>
 
 <script>
-const app=document.getElementById("app");
-const music=document.getElementById("music");
-music.volume=1.0;
-
-// CHIBI HTML
-function chibi(){
-return `
-<div class="chibi">
-  <div class="hair"></div>
-  <div class="face"></div>
-  <div class="eye left"></div>
-  <div class="eye right"></div>
-  <div class="mouth"></div>
-</div>`;
-}
-
-// MOVE BUTTON
-function move(btn){
-  const x=Math.random()*200-100;
-  const y=Math.random()*200-100;
-  btn.style.transform=`translate(${x}px,${y}px)`;
-}
+const app = document.getElementById("app");
+const music = document.getElementById("music");
 
 // START PAGE
 function start(){
+music.volume=1;
 music.play();
 
-app.innerHTML=`
+app.innerHTML = `
 <div class="card">
-  ${chibi()}
+  <div class="chibi">👩‍🦱</div>
   <h2>Forgive me Saumya</h2>
+
   <p>
 Others are gud and u are stevia 😄  
 sweeter than them but healthy and good for me 💙  
   </p>
 
-  <button class="yes" onclick="yes()">Yes I forgive you</button>
-  <button class="no" onclick="move(this)">I don't</button>
+  <button class="yes" onclick="yes()">Yes I forgive u</button>
+  <button class="no" id="noBtn">I don't</button>
 </div>
 `;
+
+const btn = document.getElementById("noBtn");
+
+// moving button
+btn.onmouseover = () => {
+  const x = Math.random()*200 - 100;
+  const y = Math.random()*200 - 100;
+  btn.style.transform = `translate(${x}px,${y}px)`;
+};
+
+// if somehow clicked
+btn.onclick = noPage;
 }
 
 // YES PAGE
 function yes(){
-app.innerHTML=`
+app.innerHTML = `
 <div class="card">
-  ${chibi()}
-  <h2>Thank you Saumya 💙</h2>
+  <div class="chibi">😊</div>
+  <h2>Thank you Saumya</h2>
+
   <p>
 thankyou saumya u are the best friend i could ask for  
 u are very important to me  
@@ -192,39 +125,41 @@ celebrate();
 
 // NO PAGE
 function noPage(){
-app.innerHTML=`
+app.innerHTML = `
 <div class="card">
-  ${chibi()}
-  <h2>Please 😔</h2>
+  <div class="chibi">😔</div>
+  <h2>Please</h2>
+
   <p>
 u still have time choose correctly or i will lose my bestest friend  
 pls forgive me u are my bestest friend
   </p>
 
-  <button class="yes" onclick="yes()">Yes I forgive you</button>
-  <button class="no" onclick="finalNo()">I don't</button>
+  <button class="yes" onclick="yes()">Yes I forgive u</button>
+  <button class="no2" onclick="finalNo()">I don't</button>
 </div>
 `;
 }
 
-// FINAL NO
+// FINAL NO PAGE
 function finalNo(){
-app.innerHTML=`
+app.innerHTML = `
 <div class="card">
-  ${chibi()}
-  <h2>Option Denied 😏</h2>
+  <div class="chibi">😭</div>
+  <h2>Option Denied</h2>
+
   <p>
 plss na 😭  
 tum mere saath pash gyi jindagi bhar ke liye  
 u cant do anything about it
   </p>
 
-  <button class="yes" onclick="yes()">Okay fine 😅</button>
+  <button class="yes" onclick="yes()">Okay fine</button>
 </div>
 `;
 }
 
-// FLOAT EFFECT
+// CELEBRATION
 function celebrate(){
 for(let i=0;i<20;i++){
   let e=document.createElement("div");
@@ -236,11 +171,6 @@ for(let i=0;i<20;i++){
   setTimeout(()=>e.remove(),6000);
 }
 }
-
-// BUTTON FLOW FIX
-document.addEventListener("click",e=>{
-if(e.target.innerText==="I don't") noPage();
-});
 
 start();
 </script>
