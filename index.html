@@ -1,48 +1,35 @@
-index. html
+index.html
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Forgive Me Saumya</title>
+<title>Forgive me Saumya</title>
 
 <style>
 body{
   margin:0;
   font-family:system-ui;
-  background:#f1f5f9;
-  overflow:hidden;
-}
-
-/* header */
-.header{
-  background:#2563eb;
-  color:#fff;
-  padding:15px;
-  text-align:center;
-  font-weight:bold;
-}
-
-/* container */
-.container{
-  margin-top:70px;
+  background:linear-gradient(135deg,#dbeafe,#f1f5f9);
   display:flex;
   justify-content:center;
+  align-items:center;
+  height:100vh;
 }
 
-/* card */
+/* CARD */
 .card{
   width:90%;
   max-width:360px;
   padding:20px;
   border-radius:20px;
-  background:#fff;
+  background:white;
   box-shadow:0 10px 30px rgba(0,0,0,0.15);
   text-align:center;
   position:relative;
 }
 
-/* buttons */
+/* BUTTONS */
 button{
   width:100%;
   padding:14px;
@@ -51,140 +38,211 @@ button{
   border-radius:12px;
   font-size:16px;
   font-weight:bold;
-  position:relative;
 }
 
-.yes{background:#2563eb;color:#fff}
+.yes{background:#2563eb;color:white}
 .no{
   background:#eee;
   position:absolute;
 }
 
-/* CHIBI (wavy hair vibe) */
+/* CHIBI CHARACTER */
 .chibi{
-  font-size:60px;
-  margin-bottom:10px;
-  animation:bounce 1s infinite;
+  width:100px;
+  height:120px;
+  margin:auto;
+  position:relative;
 }
 
-@keyframes bounce{
-  50%{transform:translateY(-8px)}
+.face{
+  width:70px;
+  height:70px;
+  background:#ffe0bd;
+  border-radius:50%;
+  position:absolute;
+  left:15px;
+  top:25px;
 }
 
-/* floating */
+.hair{
+  width:90px;
+  height:60px;
+  background:#222;
+  border-radius:50%;
+  position:absolute;
+  top:0;
+  left:5px;
+}
+
+/* WAVY HAIR */
+.hair::before,.hair::after{
+  content:'';
+  position:absolute;
+  width:40px;
+  height:40px;
+  background:#222;
+  border-radius:50%;
+}
+
+.hair::before{left:-10px;top:20px}
+.hair::after{right:-10px;top:20px}
+
+.eye{
+  width:8px;
+  height:8px;
+  background:black;
+  border-radius:50%;
+  position:absolute;
+  top:50px;
+}
+
+.eye.left{left:30px}
+.eye.right{right:30px}
+
+.mouth{
+  width:20px;
+  height:10px;
+  border-bottom:2px solid black;
+  border-radius:0 0 20px 20px;
+  position:absolute;
+  top:65px;
+  left:40px;
+}
+
+/* FLOATING EFFECT */
 .float{
   position:absolute;
-  font-size:24px;
-  bottom:-50px;
+  font-size:20px;
   animation:float 5s linear infinite;
 }
 
 @keyframes float{
-  to{transform:translateY(-120vh)}
-}
-
-/* music */
-.music{
-  position:fixed;
-  bottom:20px;
-  right:20px;
-  background:#2563eb;
-  color:#fff;
-  padding:12px;
-  border-radius:50%;
-  font-size:20px;
+  to{transform:translateY(-100vh)}
 }
 </style>
 </head>
 
 <body>
 
-<div class="header">💙 Friendship App</div>
+<div id="app"></div>
 
-<div class="container">
-  <div id="app"></div>
-</div>
-
-<div class="music" onclick="toggleMusic()">🔊</div>
-
-<audio id="bgMusic" loop>
-  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3">
+<audio id="music" loop>
+<source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3">
 </audio>
 
 <script>
 const app=document.getElementById("app");
-const music=document.getElementById("bgMusic");
-let musicOn=false;
+const music=document.getElementById("music");
+music.volume=1.0;
 
-function toggleMusic(){
-  if(musicOn){
-    music.pause();
-    event.target.innerText="🔇";
-  } else {
-    music.volume=1.0;
-    music.play();
-    event.target.innerText="🔊";
-  }
-  musicOn=!musicOn;
+// CHIBI HTML
+function chibi(){
+return `
+<div class="chibi">
+  <div class="hair"></div>
+  <div class="face"></div>
+  <div class="eye left"></div>
+  <div class="eye right"></div>
+  <div class="mouth"></div>
+</div>`;
 }
 
 // MOVE BUTTON
-function moveButton(btn){
-  const x = Math.random()*200 - 100;
-  const y = Math.random()*200 - 100;
-  btn.style.transform = `translate(${x}px, ${y}px)`;
+function move(btn){
+  const x=Math.random()*200-100;
+  const y=Math.random()*200-100;
+  btn.style.transform=`translate(${x}px,${y}px)`;
 }
 
-// MAIN
-function main(){
-  app.innerHTML=`
-  <div class="card">
-    <div class="chibi">👩‍🦱✨</div>
-    <h2>Sorry Saumya 😬</h2>
-    <p>
-    I was wrong...\n\n
-    Others are good...\n
-    but YOU are like stevia 😄\n
-    sweeter than them but also healthy for me 💙\n\n
-    Please forgive me yaar 🙏
-    </p>
+// START PAGE
+function start(){
+music.play();
 
-    <button class="yes" onclick="yes()">Okay I forgive you 👍</button>
-    <button class="no" onclick="moveButton(this)">Nope 😤</button>
-  </div>
-  `;
+app.innerHTML=`
+<div class="card">
+  ${chibi()}
+  <h2>Forgive me Saumya</h2>
+  <p>
+Others are gud and u are stevia 😄  
+sweeter than them but healthy and good for me 💙  
+  </p>
+
+  <button class="yes" onclick="yes()">Yes I forgive you</button>
+  <button class="no" onclick="move(this)">I don't</button>
+</div>
+`;
 }
 
-// YES
+// YES PAGE
 function yes(){
-  app.innerHTML=`
-  <div class="card">
-    <div class="chibi">👩‍🦱😎✨</div>
-    <h2>Best Friend Forever 🤝</h2>
-    <p>
-    I knew it 😎\n\n
-    You're honestly one of the best people in my life 🙌\n\n
-    Thanks for always being there 💙
-    </p>
-  </div>
-  `;
-  celebration();
+app.innerHTML=`
+<div class="card">
+  ${chibi()}
+  <h2>Thank you Saumya 💙</h2>
+  <p>
+thankyou saumya u are the best friend i could ask for  
+u are very important to me  
+thanks for forgiving me  
+I'll never do it again
+  </p>
+</div>
+`;
+celebrate();
 }
 
-// celebration
-function celebration(){
-  for(let i=0;i<20;i++){
-    let e=document.createElement("div");
-    e.className="float";
-    e.innerText=Math.random()>0.5?"🎉":"✨";
-    e.style.left=Math.random()*100+"vw";
-    e.style.animationDuration=(3+Math.random()*3)+"s";
-    document.body.appendChild(e);
-    setTimeout(()=>e.remove(),6000);
-  }
+// NO PAGE
+function noPage(){
+app.innerHTML=`
+<div class="card">
+  ${chibi()}
+  <h2>Please 😔</h2>
+  <p>
+u still have time choose correctly or i will lose my bestest friend  
+pls forgive me u are my bestest friend
+  </p>
+
+  <button class="yes" onclick="yes()">Yes I forgive you</button>
+  <button class="no" onclick="finalNo()">I don't</button>
+</div>
+`;
 }
 
-main();
+// FINAL NO
+function finalNo(){
+app.innerHTML=`
+<div class="card">
+  ${chibi()}
+  <h2>Option Denied 😏</h2>
+  <p>
+plss na 😭  
+tum mere saath pash gyi jindagi bhar ke liye  
+u cant do anything about it
+  </p>
+
+  <button class="yes" onclick="yes()">Okay fine 😅</button>
+</div>
+`;
+}
+
+// FLOAT EFFECT
+function celebrate(){
+for(let i=0;i<20;i++){
+  let e=document.createElement("div");
+  e.className="float";
+  e.innerText=Math.random()>0.5?"🎈":"✨";
+  e.style.left=Math.random()*100+"vw";
+  e.style.animationDuration=(3+Math.random()*3)+"s";
+  document.body.appendChild(e);
+  setTimeout(()=>e.remove(),6000);
+}
+}
+
+// BUTTON FLOW FIX
+document.addEventListener("click",e=>{
+if(e.target.innerText==="I don't") noPage();
+});
+
+start();
 </script>
 
 </body>
