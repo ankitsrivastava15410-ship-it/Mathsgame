@@ -28,10 +28,15 @@ body{
   position:relative;
 }
 
-button{
-  width:100%;
-  padding:12px;
+.btns{
+  display:flex;
+  gap:10px;
   margin-top:10px;
+}
+
+button{
+  flex:1;
+  padding:12px;
   border:none;
   border-radius:10px;
   font-size:15px;
@@ -41,13 +46,57 @@ button{
 .yes{background:#2563eb;color:white}
 .no{background:#eee;position:absolute}
 
-/* simple chibi */
+/* CHIBI */
 .chibi{
-  font-size:50px;
-  margin-bottom:10px;
+  width:80px;
+  height:80px;
+  margin:0 auto 10px;
+  position:relative;
 }
 
-/* floating */
+.face{
+  width:60px;
+  height:60px;
+  background:#ffe0bd;
+  border-radius:50%;
+  position:absolute;
+  left:10px;
+  top:15px;
+}
+
+.hair{
+  width:70px;
+  height:40px;
+  background:#222;
+  border-radius:50%;
+  position:absolute;
+  top:0;
+  left:5px;
+}
+
+.eye{
+  width:6px;
+  height:6px;
+  background:black;
+  border-radius:50%;
+  position:absolute;
+  top:40px;
+}
+
+.eye.left{left:25px}
+.eye.right{right:25px}
+
+.mouth{
+  width:15px;
+  height:8px;
+  border-bottom:2px solid black;
+  border-radius:0 0 10px 10px;
+  position:absolute;
+  top:50px;
+  left:32px;
+}
+
+/* FLOAT */
 .float{
   position:absolute;
   font-size:22px;
@@ -64,22 +113,27 @@ button{
 
 <div id="app"></div>
 
-<audio id="music" loop>
-<source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3">
-</audio>
-
 <script>
 const app = document.getElementById("app");
-const music = document.getElementById("music");
+let escapeCount = 0;
 
-// START PAGE
+// CHIBI
+function chibi(){
+return `
+<div class="chibi">
+  <div class="hair"></div>
+  <div class="face"></div>
+  <div class="eye left"></div>
+  <div class="eye right"></div>
+  <div class="mouth"></div>
+</div>`;
+}
+
+// START
 function start(){
-music.volume=1;
-music.play();
-
 app.innerHTML = `
 <div class="card">
-  <div class="chibi">👩‍🦱</div>
+  ${chibi()}
   <h2>Forgive me Saumya</h2>
 
   <p>
@@ -87,30 +141,55 @@ Others are gud and u are stevia 😄
 sweeter than them but healthy and good for me 💙  
   </p>
 
-  <button class="yes" onclick="yes()">Yes I forgive u</button>
-  <button class="no" id="noBtn">I don't</button>
+  <div class="btns">
+    <button class="yes" onclick="yes()">Yes</button>
+    <button class="no" id="noBtn">I don't</button>
+  </div>
 </div>
 `;
 
 const btn = document.getElementById("noBtn");
 
-// moving button
-btn.onmouseover = () => {
-  const x = Math.random()*200 - 100;
-  const y = Math.random()*200 - 100;
-  btn.style.transform = `translate(${x}px,${y}px)`;
-};
+// MOVE BUTTON
+btn.addEventListener("click", function(e){
+  if(escapeCount < 5){
+    e.preventDefault();
+    escapeCount++;
+    move(btn);
+  } else {
+    noPage();
+  }
+});
 
-// if somehow clicked
-btn.onclick = noPage;
+btn.addEventListener("touchstart", function(e){
+  if(escapeCount < 5){
+    e.preventDefault();
+    escapeCount++;
+    move(btn);
+  }
+});
+}
+
+// MOVE FUNCTION
+function move(btn){
+  const card = document.querySelector(".card");
+
+  const maxX = card.clientWidth - btn.offsetWidth - 10;
+  const maxY = card.clientHeight - btn.offsetHeight - 10;
+
+  const x = Math.random() * maxX;
+  const y = Math.random() * maxY;
+
+  btn.style.left = x + "px";
+  btn.style.top = y + "px";
 }
 
 // YES PAGE
 function yes(){
 app.innerHTML = `
 <div class="card">
-  <div class="chibi">😊</div>
-  <h2>Thank you Saumya</h2>
+  ${chibi()}
+  <h2>Thank you Saumya 💙</h2>
 
   <p>
 thankyou saumya u are the best friend i could ask for  
@@ -127,26 +206,28 @@ celebrate();
 function noPage(){
 app.innerHTML = `
 <div class="card">
-  <div class="chibi">😔</div>
-  <h2>Please</h2>
+  ${chibi()}
+  <h2>Please 😔</h2>
 
   <p>
 u still have time choose correctly or i will lose my bestest friend  
 pls forgive me u are my bestest friend
   </p>
 
-  <button class="yes" onclick="yes()">Yes I forgive u</button>
-  <button class="no2" onclick="finalNo()">I don't</button>
+  <div class="btns">
+    <button class="yes" onclick="yes()">Yes</button>
+    <button onclick="finalNo()">I don't</button>
+  </div>
 </div>
 `;
 }
 
-// FINAL NO PAGE
+// FINAL NO
 function finalNo(){
 app.innerHTML = `
 <div class="card">
-  <div class="chibi">😭</div>
-  <h2>Option Denied</h2>
+  ${chibi()}
+  <h2>Option Denied 😏</h2>
 
   <p>
 plss na 😭  
@@ -154,7 +235,7 @@ tum mere saath pash gyi jindagi bhar ke liye
 u cant do anything about it
   </p>
 
-  <button class="yes" onclick="yes()">Okay fine</button>
+  <button class="yes" onclick="yes()">Okay fine 😅</button>
 </div>
 `;
 }
@@ -177,3 +258,4 @@ start();
 
 </body>
 </html>
+
