@@ -24,6 +24,7 @@ body{
 
 .card{text-align:center}
 
+/* BUTTONS */
 button{
   width:100%;
   padding:14px;
@@ -35,7 +36,10 @@ button{
 }
 
 .yes{background:#f59e0b;color:white}
-.no{background:#eee}
+.no{
+  background:#eee;
+  position:relative;
+}
 
 /* CHIBI */
 .chibi{
@@ -114,8 +118,9 @@ button{
 
 <body>
 
+<!-- 🎵 YOUR SONG -->
 <audio id="bgm" loop>
-  <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_115b9bdf3b.mp3" type="audio/mp3">
+  <source src="song.mp3" type="audio/mp3">
 </audio>
 
 <div id="app"></div>
@@ -124,7 +129,7 @@ button{
 const app = document.getElementById("app");
 let escapeCount = 0;
 
-/* PLAY MUSIC ON FIRST TAP */
+/* PLAY MUSIC */
 document.body.addEventListener("click", ()=>{
   document.getElementById("bgm").play();
 },{once:true});
@@ -145,7 +150,7 @@ return `
 `;
 }
 
-/* START PAGE */
+/* START */
 function start(){
 app.innerHTML = `
 <div class="app">
@@ -169,6 +174,7 @@ sweeter than them but healthy and good for me 🍜✨
 
 const btn = document.getElementById("noBtn");
 
+/* FIXED MOVEMENT */
 btn.onclick = (e)=>{
   if(escapeCount < 6){
     e.preventDefault();
@@ -180,10 +186,13 @@ btn.onclick = (e)=>{
 };
 }
 
-/* MOVE BUTTON */
+/* MOVE */
 function move(btn){
-  const x = Math.random() * (window.innerWidth - btn.offsetWidth - 20);
-  const y = Math.random() * 250;
+  const maxX = window.innerWidth - btn.offsetWidth - 20;
+  const maxY = window.innerHeight - btn.offsetHeight - 100;
+
+  const x = Math.random() * maxX;
+  const y = Math.random() * maxY;
 
   btn.style.position="absolute";
   btn.style.left = x + "px";
@@ -217,7 +226,7 @@ app.innerHTML = `
 `;
 }
 
-/* YOUR FINAL MESSAGE (FIXED) */
+/* FULL MESSAGE RESTORED */
 function page4(){
 app.innerHTML = `
 <div class="app">
@@ -234,6 +243,13 @@ I am truly sorry for not expressing myself
 and not being a good friend as u were 😔  
 
 pls forgive me  
+
+U are truly one of the best things of my life  
+I never get tired of talking with u  
+and u are the best friend I could have asked for  
+and I am truly sorry for not expressing myself  
+and being a good friend as u were  
+
 I will try to become a good friend from now on 🤝✨  
     </p>
   </div>
