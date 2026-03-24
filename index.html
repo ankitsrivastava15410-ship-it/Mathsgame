@@ -70,6 +70,7 @@ button{
   <source src="song.mp3" type="audio/mp3">
 </audio>
 
+<!-- PAGE 1 -->
 <div id="s1" class="screen active">
   <div class="emoji" id="emo">🙂</div>
   <h2 id="name">Saumya jii 💛</h2>
@@ -78,6 +79,7 @@ button{
   <button class="no" id="noBtn">I don't</button>
 </div>
 
+<!-- PAGE 2 -->
 <div id="s2" class="screen">
   <div class="emoji">🥲</div>
   <p>pls forgive me... u are my bestest friend</p>
@@ -85,12 +87,39 @@ button{
   <button class="no" id="noBtn2">I don't</button>
 </div>
 
+<!-- PAGE 3 -->
 <div id="s3" class="screen">
   <h2>😭 pls na...</h2>
   <p>u still have time choose correctly</p>
   <button class="yes" onclick="yes()">Final chance</button>
 </div>
 
+<!-- NEW MIDDLE PAGE -->
+<div id="sNew" class="screen">
+  <div class="emoji">🥹</div>
+
+  <h2>You forgave me 💛</h2>
+
+  <p>
+  I knew you would forgive me 🥹💛<br><br>
+
+  U are really very special to me  
+  and I am lucky to have u in my life 😄<br><br>
+
+  I don’t say it often  
+  but u matter a lot to me 🍜✨<br><br>
+
+  Honestly, things feel incomplete without talking to u 😔<br><br>
+
+  And I don’t ever want to lose a friend like u 💛<br><br>
+
+  Thank you for always being there, even when I mess up 🙂
+  </p>
+
+  <button class="yes" onclick="show('s4'); celebrate()">Continue 💛</button>
+</div>
+
+<!-- FINAL PAGE -->
 <div id="s4" class="screen">
   <h2>Thank you 💛</h2>
 
@@ -126,8 +155,8 @@ function show(id){
 }
 
 function yes(){
-  show('s4');
-  celebrate();
+  document.getElementById("emo").innerText="🥹";
+  show('sNew');
 }
 
 function move(btn){
@@ -166,7 +195,7 @@ function celebrate(){
   }
 }
 
-// name rotation
+// rotating names
 const names=["saumya jii 💛","maggi paglu 🍜","peeli pari 🌼"];
 setInterval(()=>{
   document.getElementById("name").innerText=
