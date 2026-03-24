@@ -1,325 +1,287 @@
 index.html
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Forgive me 💛</title>
-
-<style>
-body{
-  margin:0;
-  font-family:Arial;
-  background:linear-gradient(135deg,#fff7ed,#fde68a);
-  overflow:hidden;
+  <meta charset="UTF-8" />
+  <title>Math Trainer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --bg: #ffffff;
+      --card: #f6f7f8;
+      --text: #000000;
+      --primary: #58cc02;
+      --danger: #ff4b4b;
+    }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .app {
+      width: 100%;
+      max-width: 390px;
+      background: var(--card);
+      border-radius: 24px;
+      padding: 20px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+      overflow: hidden;
+    }
+    h1 { margin: 0; text-align: center; }/* DUOLINGO STYLE ANIMATION */
+.fade {
+  animation: fadeSlide 0.4s ease;
+}
+@keyframes fadeSlide {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-/* APP */
-.app{
-  min-height:100vh;
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
-  padding:20px;
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  font-weight: bold;
 }
 
-/* CARD */
-.card{text-align:center}
-
-/* EMOJI */
-.emoji{
-  font-size:60px;
-  margin:15px 0;
-  animation:fadeIn 1s ease, bounce 2s infinite;
-  cursor:pointer;
+.progress {
+  height: 10px;
+  background: #ddd;
+  border-radius: 5px;
+  overflow: hidden;
+  margin: 10px 0;
 }
 
-@keyframes bounce{
-  0%,100%{transform:translateY(0)}
-  50%{transform:translateY(-10px)}
-}
-@keyframes fadeIn{
-  from{opacity:0;transform:scale(0.5)}
-  to{opacity:1;transform:scale(1)}
+.fill {
+  height: 100%;
+  background: var(--primary);
+  width: 0%;
+  transition: width 0.3s;
 }
 
-/* BUTTON */
-button{
-  width:100%;
-  padding:14px;
-  margin-top:12px;
-  border:none;
-  border-radius:12px;
-  font-size:16px;
-  font-weight:bold;
-}
-button:active{transform:scale(0.95)}
-
-.yes{background:#f59e0b;color:white}
-.no{
-  background:#eee;
-  position:fixed;
-  transition:0.1s;
+.question {
+  font-size: 28px;
+  text-align: center;
+  margin: 20px 0;
+  animation: pop 0.3s ease;
 }
 
-/* PROGRESS */
-.progress{
-  height:8px;
-  background:#eee;
-  border-radius:10px;
-  overflow:hidden;
-}
-.progress-fill{
-  height:100%;
-  width:0%;
-  background:#58cc02;
-  transition:width 0.4s ease;
+@keyframes pop {
+  0% { transform: scale(0.8); }
+  100% { transform: scale(1); }
 }
 
-/* PAGE ANIMATION */
-.fade{
-  animation:fadeSlide 0.4s ease;
-}
-@keyframes fadeSlide{
-  from{opacity:0;transform:translateY(20px);}
-  to{opacity:1;transform:translateY(0);}
+.options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
 }
 
-/* SUCCESS */
-.success{
-  animation:pop 0.4s ease;
-}
-@keyframes pop{
-  0%{transform:scale(0.7);}
-  100%{transform:scale(1);}
+button {
+  padding: 14px;
+  border-radius: 14px;
+  border: none;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  background: #fff;
+  box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+  transition: transform 0.1s;
 }
 
-/* FLOAT */
-.float{
-  position:absolute;
-  font-size:22px;
-  animation:float 5s linear infinite;
+button:active {
+  transform: scale(0.95);
 }
-@keyframes float{
-  to{transform:translateY(-100vh)}
+
+button.correct {
+  background: var(--primary);
+  color: #fff;
 }
-</style>
+
+button.wrong {
+  background: var(--danger);
+  color: #fff;
+}
+
+.center { text-align: center; }
+.hidden { display: none; }
+.skills button { width: 100%; margin: 6px 0; }
+
+/* CELEBRATION FLOAT */
+.float {
+  position: absolute;
+  animation: floatUp linear forwards;
+}
+
+@keyframes floatUp {
+  from { transform: translateY(0); }
+  to { transform: translateY(-120vh); }
+}
+
+/* PUNJABI HIGHLIGHT */
+.highlight {
+  background: #fff3cd;
+  padding: 12px;
+  border-radius: 12px;
+  margin-top: 12px;
+  font-weight: 900;
+  font-size: 18px;
+  color: #b45309;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+  </style>
 </head>
-
-<body>
-
-<audio id="bgm" loop>
-  <source src="song.mp3" type="audio/mp3">
-</audio>
-
-<div id="app"></div>
-
-<script>
-const app = document.getElementById("app");
-
-let escapeCount = 0;
-let step = 1;
-const totalSteps = 5;
-
-/* RANDOM NAME */
-function getName(){
-  const names = ["Saumya jii 💛","Maggi Paglu 🍜","Peeli Pari 💛"];
-  return names[Math.floor(Math.random()*names.length)];
-}
-
-/* MUSIC */
-function playMusic(){
-  document.getElementById("bgm").play().catch(()=>{});
-}
-
-/* EMOJI */
-function reactEmoji(el){
-  const reactions = ["🙂","🥲","😭","🙃","😄"];
-  el.innerText = reactions[Math.floor(Math.random()*reactions.length)];
-}
-
-/* SUSPICIOUS */
-function suspicious(){
-  const e=document.getElementById("mainEmoji");
-  if(e) e.innerText="🤨";
-}
-
-/* MOVE BUTTON */
-function move(btn){
-  const maxX = window.innerWidth - btn.offsetWidth - 10;
-  const maxY = window.innerHeight - btn.offsetHeight - 10;
-  btn.style.left = Math.random()*maxX+"px";
-  btn.style.top = Math.random()*maxY+"px";
-}
-
-/* RUN AWAY */
-function runAway(btn){
-  document.addEventListener("touchstart",()=>move(btn));
-}
-
-/* PROGRESS */
-function updateProgress(){
-  const percent=(step/totalSteps)*100;
-  const bar=document.getElementById("progressFill");
-  if(bar) bar.style.width=percent+"%";
-}
-
-/* START */
-function start(){
-app.innerHTML=`
-<div class="app fade">
-<div class="progress"><div class="progress-fill" id="progressFill"></div></div>
-
-<div class="card">
-<div class="emoji" id="mainEmoji" onclick="reactEmoji(this)">🙃🥲</div>
-
-<h2>Forgive me ${getName()} 😔💛</h2>
-
-<p>
-Others are gud…  
-and u are stevia 😄💛  
-sweeter than them but healthy and good for me 🍜✨  
-</p>
+<body><div class="app fade">
+  <h1>🧠 Math Trainer</h1>  <div id="dashboard">
+    <div class="top">
+      <span>🔥 Streak: <span id="streak">0</span></span>
+      <span>⭐ XP: <span id="xp">0</span></span>
+    </div><h3>Skills</h3>
+<div class="skills">
+  <button onclick="startSkill('+')">Addition</button>
+  <button onclick="startSkill('-')">Subtraction</button>
+  <button onclick="startSkill('*')">Multiplication</button>
+  <button onclick="startSkill('/')">Division</button>
+  <button onclick="startSkill('mix')">Mixed</button>
+  <button onclick="startSkill('god')">🔥 Super Advanced (Genius)</button>
 </div>
 
-<div>
-<button class="yes" onclick="playMusic(); nextPage(page2)">Yes 😊</button>
-<button class="no" id="noBtn">I don't 😒</button>
-</div>
-</div>
-`;
+  </div>  <div id="game" class="hidden fade">
+    <div class="progress"><div id="progressFill" class="fill"></div></div>
+    <div class="question" id="question"></div>
+    <div class="options" id="options"></div>
+  </div>  <div id="summary" class="hidden center fade"></div>
+</div><script>
+let xp = +localStorage.getItem('xp') || 0;
+let streak = +localStorage.getItem('streak') || 0;
 
-const btn=document.getElementById("noBtn");
+let round = 0;
+let score = 0;
+let correct;
+let skill;
+const total = 10;
 
-btn.onclick=(e)=>{
-  suspicious();
-  if(escapeCount<6){
-    e.preventDefault();
-    escapeCount++;
-    move(btn);
-  }else{
-    nextPage(pageNo1);
+updateStats();
+
+function updateStats() {
+  document.getElementById('xp').textContent = xp;
+  document.getElementById('streak').textContent = streak;
+}
+
+function startSkill(s) {
+  skill = s;
+  round = 0;
+  score = 0;
+  document.getElementById('dashboard').classList.add('hidden');
+  document.getElementById('game').classList.remove('hidden');
+  next();
+}
+
+function next() {
+  if (round >= total) return end();
+  round++;
+  document.getElementById('progressFill').style.width = (round/total*100)+'%';
+  generate();
+}
+
+function generate() {
+  let a, b, op;
+
+  op = skill === 'mix'
+    ? ['+','-','*','/'][Math.floor(Math.random()*4)]
+    : skill;
+
+  if (op === '+') {
+    a = Math.floor(Math.random()*100);
+    b = Math.floor(Math.random()*100);
+  } else if (op === '-') {
+    a = Math.floor(Math.random()*100);
+    b = Math.floor(Math.random()*100);
+    if (b > a) [a,b]=[b,a];
+  } else if (op === '*') {
+    a = Math.floor(Math.random()*20);
+    b = Math.floor(Math.random()*20);
+  } else {
+    b = Math.floor(Math.random()*10)+1;
+    a = b * (Math.floor(Math.random()*10));
   }
-};
 
-runAway(btn);
-updateProgress();
+  correct = eval(a+op+b);
+  document.getElementById('question').textContent = `${a} ${op} ${b}`;
+
+  let answers=[correct];
+  while(answers.length<4){
+    let fake = correct + Math.floor(Math.random()*20-10);
+    if(!answers.includes(fake)) answers.push(fake);
+  }
+
+  answers.sort(()=>Math.random()-0.5);
+  const opt=document.getElementById('options');
+  opt.innerHTML='';
+
+  answers.forEach(x=>{
+    const btn=document.createElement('button');
+    btn.textContent=x;
+    btn.onclick=()=>check(x,btn);
+    opt.appendChild(btn);
+  });
 }
 
-/* NAVIGATION */
-function nextPage(fn){
-  step++;
-  fn();
-  setTimeout(updateProgress,50);
+function check(val,btn){
+  if(val===correct){
+    score++;
+    btn.classList.add('correct');
+    celebrate();
+  }else{
+    btn.classList.add('wrong');
+    streak=0;
+  }
+  setTimeout(next,500);
 }
 
-/* PAGES */
-function page2(){
-app.innerHTML=`
-<div class="app fade">
-<div class="progress"><div class="progress-fill" id="progressFill"></div></div>
+function end(){
+  let gained=score*10;
+  xp+=gained;
+  streak++;
 
-<div class="card">
-<div class="emoji">🥲😭</div>
-<h2>I was wrong 😭</h2>
-<p>pls forgive me 😔💛</p>
-</div>
+  localStorage.setItem('xp',xp);
+  localStorage.setItem('streak',streak);
 
-<button class="yes" onclick="nextPage(page3)">Continue ➡</button>
-</div>
-`;
+  document.getElementById('game').classList.add('hidden');
+  const s=document.getElementById('summary');
+  s.classList.remove('hidden');
+
+  s.innerHTML=`
+    <h2>Lesson Complete 🎉</h2>
+    <p>Score: ${score}/${total}</p>
+    <p>XP Gained: +${gained}</p>
+
+    <div class="highlight">
+      Tussi hamare vadhiya mitr ho 💛<br>
+      te tussi mere naal gussa na kariya karo jii 😔
+    </div>
+
+    <button onclick="location.reload()">Continue</button>
+  `;
 }
 
-function page3(){
-app.innerHTML=`
-<div class="app fade">
-<div class="progress"><div class="progress-fill" id="progressFill"></div></div>
-
-<div class="card">
-<div class="emoji">🙂💛</div>
-<h2>You matter</h2>
-<p>I don’t want to lose u 😭</p>
-</div>
-
-<button class="yes" onclick="nextPage(page4)">Next ➡</button>
-</div>
-`;
-}
-
-function page4(){
-app.innerHTML=`
-<div class="app fade">
-<div class="progress"><div class="progress-fill" id="progressFill"></div></div>
-
-<div class="card">
-<div class="emoji">🤨🥲</div>
-
-<h2>From my heart 💛</h2>
-
-<p>
-U are truly one of the best things of my life 💛  
-I never get tired of talking with u 😄  
-and u are the best friend I could have asked for 🍜  
-
-I am truly sorry for not expressing myself  
-and not being a good friend as u were 😔  
-
-pls forgive me  
-
-Tussi hamare vadhiya mitr ho 💛  
-te tussi mere naal gussa na kariya karo jii 😔  
-
-I will try to become a good friend from now on 🤝✨  
-</p>
-</div>
-
-<button class="yes" onclick="nextPage(finalYes)">Forgive 😊</button>
-</div>
-`;
-}
-
-function finalYes(){
-app.innerHTML=`
-<div class="app fade">
-<div class="progress"><div class="progress-fill" id="progressFill"></div></div>
-
-<div class="card">
-<div class="emoji success">🎉🙂🍜</div>
-<h2>Thank You ${getName()} 💛</h2>
-</div>
-</div>
-`;
-celebrate();
-}
-
-/* NO FLOW */
-function pageNo1(){
-app.innerHTML=`
-<div class="app fade">
-<div class="card">
-<div class="emoji">😭🥲</div>
-<h2>Please 😭</h2>
-</div>
-
-<button class="yes" onclick="nextPage(page2)">Okay fine 😅</button>
-</div>
-`;
-}
-
-/* CELEBRATION */
 function celebrate(){
-for(let i=0;i<40;i++){
-let e=document.createElement("div");
-e.className="float";
-e.innerText=Math.random()>0.5?"🎈":"✨";
-e.style.left=Math.random()*100+"vw";
-document.body.appendChild(e);
-setTimeout(()=>e.remove(),6000);
+  for(let i=0;i<20;i++){
+    let e=document.createElement('div');
+    e.className='float';
+    e.innerText=Math.random()>0.5?'🎈':'✨';
+    e.style.left=Math.random()*100+'vw';
+    e.style.bottom=(-Math.random()*100)+'px';
+    e.style.fontSize=(16+Math.random()*20)+'px';
+    e.style.animationDuration=(2+Math.random()*3)+'s';
+    document.body.appendChild(e);
+    setTimeout(()=>e.remove(),4000);
+  }
 }
-}
-
-start();
-</script>
-
-</body>
+</script></body>
 </html>
