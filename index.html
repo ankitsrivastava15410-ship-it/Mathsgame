@@ -11,18 +11,27 @@ body{
   margin:0;
   font-family:Arial;
   background:linear-gradient(135deg,#fff7ed,#fde68a);
-  overflow:hidden;
 }
 
+/* MOBILE SAFE APP */
 .app{
   min-height:100vh;
   display:flex;
   flex-direction:column;
   justify-content:space-between;
   padding:20px;
+  box-sizing:border-box;
 }
 
-.card{text-align:center}
+/* CONTENT */
+.card{
+  text-align:center;
+}
+
+/* BUTTON AREA */
+.btns{
+  position:relative;
+}
 
 /* BUTTONS */
 button{
@@ -118,7 +127,7 @@ button{
 
 <body>
 
-<!-- 🎵 YOUR SONG -->
+<!-- 🎵 IMPORTANT: CHANGE NAME IF NEEDED -->
 <audio id="bgm" loop>
   <source src="song.mp3" type="audio/mp3">
 </audio>
@@ -129,10 +138,11 @@ button{
 const app = document.getElementById("app");
 let escapeCount = 0;
 
-/* PLAY MUSIC */
-document.body.addEventListener("click", ()=>{
-  document.getElementById("bgm").play();
-},{once:true});
+/* PLAY MUSIC ON BUTTON CLICK */
+function playMusic(){
+  const music = document.getElementById("bgm");
+  music.play().catch(()=>{});
+}
 
 /* CHIBI */
 function chibi(){
@@ -165,8 +175,8 @@ sweeter than them but healthy and good for me 🍜✨
     </p>
   </div>
 
-  <div>
-    <button class="yes" onclick="page2()">Yes 😊</button>
+  <div class="btns">
+    <button class="yes" onclick="playMusic(); page2()">Yes 😊</button>
     <button class="no" id="noBtn">I don't 😒</button>
   </div>
 </div>
@@ -174,7 +184,6 @@ sweeter than them but healthy and good for me 🍜✨
 
 const btn = document.getElementById("noBtn");
 
-/* FIXED MOVEMENT */
 btn.onclick = (e)=>{
   if(escapeCount < 6){
     e.preventDefault();
@@ -186,10 +195,12 @@ btn.onclick = (e)=>{
 };
 }
 
-/* MOVE */
+/* MOVE INSIDE SCREEN */
 function move(btn){
-  const maxX = window.innerWidth - btn.offsetWidth - 20;
-  const maxY = window.innerHeight - btn.offsetHeight - 100;
+  const container = document.querySelector(".btns");
+
+  const maxX = container.clientWidth - btn.offsetWidth;
+  const maxY = 150;
 
   const x = Math.random() * maxX;
   const y = Math.random() * maxY;
@@ -199,42 +210,17 @@ function move(btn){
   btn.style.top = y + "px";
 }
 
-/* YES FLOW */
-function page2(){
-app.innerHTML = `
-<div class="app">
-  <div class="card">
-    ${chibi()}
-    <h2>I was wrong 😭</h2>
-    <p>pls forgive me 😔💛🍜</p>
-  </div>
-  <button class="yes" onclick="page3()">Continue ➡</button>
-</div>
-`;
-}
+/* REST SAME FLOW */
+function page2(){ app.innerHTML=`<div class="app"><div class="card">${chibi()}<h2>I was wrong 😭</h2><p>pls forgive me 😔💛🍜</p></div><button class="yes" onclick="page3()">Continue ➡</button></div>`;}
+function page3(){ app.innerHTML=`<div class="app"><div class="card">${chibi()}<h2>You matter 💛</h2><p>I don’t want to lose u 😭</p></div><button class="yes" onclick="page4()">Next ➡</button></div>`;}
 
-function page3(){
-app.innerHTML = `
-<div class="app">
-  <div class="card">
-    ${chibi()}
-    <h2>You matter 💛</h2>
-    <p>I don’t want to lose u 😭</p>
-  </div>
-  <button class="yes" onclick="page4()">Next ➡</button>
-</div>
-`;
-}
-
-/* FULL MESSAGE RESTORED */
 function page4(){
-app.innerHTML = `
+app.innerHTML=`
 <div class="app">
-  <div class="card">
-    ${chibi()}
-    <h2>From my heart 💛</h2>
-
-    <p>
+<div class="card">
+${chibi()}
+<h2>From my heart 💛</h2>
+<p>
 U are truly one of the best things of my life 💛  
 I never get tired of talking with u 😄  
 and u are the best friend I could have asked for 🍜  
@@ -251,69 +237,24 @@ and I am truly sorry for not expressing myself
 and being a good friend as u were  
 
 I will try to become a good friend from now on 🤝✨  
-    </p>
-  </div>
-
-  <button class="yes" onclick="finalYes()">Forgive 😊</button>
+</p>
 </div>
-`;
+<button class="yes" onclick="finalYes()">Forgive 😊</button>
+</div>`;
 }
 
-function finalYes(){
-app.innerHTML = `
-<div class="app">
-  <div class="card">
-    ${chibi()}
-    <h2>Thank You Saumya 💛🎉</h2>
-    <p>thanks for forgiving me 🍜😄</p>
-  </div>
-</div>
-`;
-celebrate();
-}
+function finalYes(){ app.innerHTML=`<div class="app"><div class="card">${chibi()}<h2>Thank You Saumya 💛🎉</h2></div></div>`; celebrate(); }
 
-/* NO FLOW */
-function pageNo1(){
-app.innerHTML = `
-<div class="app">
-  <div class="card">
-    ${chibi()}
-    <h2>Please 😭</h2>
-    <p>pls forgive me 🥺</p>
-  </div>
+function pageNo1(){ app.innerHTML=`<div class="app"><div class="card">${chibi()}<h2>Please 😭</h2></div><button class="yes" onclick="page2()">Okay fine 😅</button></div>`;}
 
-  <div>
-    <button class="yes" onclick="page2()">Okay fine 😅</button>
-    <button onclick="pageNo2()">I don't 😤</button>
-  </div>
-</div>
-`;
-}
-
-function pageNo2(){
-app.innerHTML = `
-<div class="app">
-  <div class="card">
-    ${chibi()}
-    <h2>Option Denied 😏</h2>
-    <p>tum mere saath pash gyi 😂🍜</p>
-  </div>
-
-  <button class="yes" onclick="page2()">Okay fine 😅</button>
-</div>
-`;
-}
-
-/* CELEBRATION */
 function celebrate(){
 for(let i=0;i<30;i++){
-  let e=document.createElement("div");
-  e.className="float";
-  e.innerText=Math.random()>0.5?"🎈":"✨";
-  e.style.left=Math.random()*100+"vw";
-  e.style.animationDuration=(3+Math.random()*3)+"s";
-  document.body.appendChild(e);
-  setTimeout(()=>e.remove(),6000);
+let e=document.createElement("div");
+e.className="float";
+e.innerText=Math.random()>0.5?"🎈":"✨";
+e.style.left=Math.random()*100+"vw";
+document.body.appendChild(e);
+setTimeout(()=>e.remove(),6000);
 }
 }
 
